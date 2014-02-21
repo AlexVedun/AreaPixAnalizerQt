@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>748</width>
+    <height>490</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>AreaPixAnalizer</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="AreaPixAnalizer.qrc">
+    <normaloff>:/images/qt80x80.png</normaloff>:/images/qt80x80.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>false</bool>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QGraphicsView" name="ImageView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QwtPlot" name="MainPlot">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>748</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="Exit_action"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Изображение</string>
+    </property>
+    <addaction name="OpenImage_action"/>
+    <addaction name="separator"/>
+    <addaction name="Make_bigger_action"/>
+    <addaction name="Make_Smaller_action"/>
+    <addaction name="separator"/>
+    <addaction name="ClearMarkers_action"/>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>Режим</string>
+    </property>
+    <widget class="QMenu" name="menu_4">
+     <property name="title">
+      <string>Единицы измерения</string>
+     </property>
+     <addaction name="SetPix_action"/>
+     <addaction name="SetMkm_action"/>
+     <addaction name="SetPercent_action"/>
+    </widget>
+    <addaction name="Line_action"/>
+    <addaction name="Area_action"/>
+    <addaction name="CalibrMode_action"/>
+    <addaction name="Microhardness_action"/>
+    <addaction name="BlackWhite_action"/>
+    <addaction name="separator"/>
+    <addaction name="SetScale_action"/>
+    <addaction name="Set_Force_action"/>
+    <addaction name="menu_4"/>
+   </widget>
+   <widget class="QMenu" name="menu_5">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="About_action"/>
+    <addaction name="AboutQt_action"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_3"/>
+   <addaction name="menu_5"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="Exit_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/door_out.png</normaloff>:/images/door_out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="OpenImage_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/folder.png</normaloff>:/images/folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Открыть...</string>
+   </property>
+  </action>
+  <action name="Line_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/draw_line.png</normaloff>:/images/draw_line.png</iconset>
+   </property>
+   <property name="text">
+    <string>Линия</string>
+   </property>
+  </action>
+  <action name="Area_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/draw_polygon.png</normaloff>:/images/draw_polygon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Область</string>
+   </property>
+  </action>
+  <action name="CalibrMode_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/measure.png</normaloff>:/images/measure.png</iconset>
+   </property>
+   <property name="text">
+    <string>Калибровка</string>
+   </property>
+  </action>
+  <action name="SetScale_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/dialog.png</normaloff>:/images/dialog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Задать масштаб...</string>
+   </property>
+   <property name="toolTip">
+    <string>Задать масштаб...</string>
+   </property>
+  </action>
+  <action name="Make_bigger_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/zoom_in.png</normaloff>:/images/zoom_in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Увеличить</string>
+   </property>
+  </action>
+  <action name="Make_Smaller_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/zoom_out.png</normaloff>:/images/zoom_out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Уменьшить</string>
+   </property>
+  </action>
+  <action name="BlackWhite_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/designmoo.png</normaloff>:/images/designmoo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Черное / белое</string>
+   </property>
+  </action>
+  <action name="ClearMarkers_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/bin.png</normaloff>:/images/bin.png</iconset>
+   </property>
+   <property name="text">
+    <string>Очистить маркеры</string>
+   </property>
+  </action>
+  <action name="SetPix_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Пиксели</string>
+   </property>
+  </action>
+  <action name="SetMkm_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Микрометры</string>
+   </property>
+  </action>
+  <action name="SetPercent_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Проценты</string>
+   </property>
+  </action>
+  <action name="Set_Force_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/dialog.png</normaloff>:/images/dialog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Задать нагрузку...</string>
+   </property>
+   <property name="toolTip">
+    <string>Задать нагрузку...</string>
+   </property>
+  </action>
+  <action name="Microhardness_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/Microhardness.png</normaloff>:/images/Microhardness.png</iconset>
+   </property>
+   <property name="text">
+    <string>Микротвердость</string>
+   </property>
+  </action>
+  <action name="About_action">
+   <property name="text">
+    <string>О программе...</string>
+   </property>
+  </action>
+  <action name="AboutQt_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/qt80x80.png</normaloff>:/images/qt80x80.png</iconset>
+   </property>
+   <property name="text">
+    <string>О библиотеке Qt...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QwtPlot</class>
+   <extends>QFrame</extends>
+   <header>qwt_plot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="AreaPixAnalizer.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>Exit_action</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>244</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
