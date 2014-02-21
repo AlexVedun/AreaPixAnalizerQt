@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ModeGroup->addAction(ui->Area_action);
     ModeGroup->addAction(ui->CalibrMode_action);
     ModeGroup->addAction(ui->Microhardness_action);
+    ModeGroup->addAction(ui->ColorLine_action);
     ModeGroup->addAction(ui->BlackWhite_action);
     MeasureUnitsGroup = new QActionGroup (this);
     MeasureUnitsGroup->addAction(ui->SetPix_action);
@@ -72,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(ui->Area_action);
     ui->mainToolBar->addAction(ui->CalibrMode_action);
     ui->mainToolBar->addAction(ui->Microhardness_action);
+    ui->mainToolBar->addAction(ui->ColorLine_action);
     ui->mainToolBar->addAction(ui->BlackWhite_action);
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->Make_bigger_action);
@@ -143,6 +145,12 @@ void MainWindow::MouseButtonPress()
         LineItem = new QGraphicsLineItem (0, Scene);
         LineItem->setPen(TempPen);
     }
+    else if (ui->ColorLine_action->isChecked())
+    {
+        //
+        LineItem = new QGraphicsLineItem (0, Scene);
+        LineItem->setPen(TempPen);
+    }
     else if (ui->Area_action->isChecked())
     {
         //
@@ -175,6 +183,11 @@ void MainWindow::MouseButtonRelease()
     {
         //
         Line (Scene->getTopLeft(), Scene->getBottomRight());
+    }
+    else if (ui->ColorLine_action->isChecked())
+    {
+        //
+        ColorLine (Scene->getTopLeft(), Scene->getBottomRight());
     }
     else if (ui->Area_action->isChecked())
     {
@@ -315,6 +328,67 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     ReadyStatus->setText(cReady);
 }
 
+void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
+{
+    BeginPoint = MainImage->mapFromScene(BeginPoint);
+    EndPoint = MainImage->mapFromScene(EndPoint);
+    int x1 = BeginPoint.x();
+    int y1 = BeginPoint.y();
+    int x2 = EndPoint.x();
+    int y2 = EndPoint.y();
+    int deltaX = abs(x2 - x1);
+    int deltaY = abs(y2 - y1);
+    int signX = x1 < x2 ? 1 : -1;
+    int signY = y1 < y2 ? 1 : -1;
+    int error = deltaX - deltaY;
+    int count = deltaY>deltaX ? deltaY : deltaX;
+    ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, count*Scale);
+//    if (isSetScale) ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cMkm);
+    if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked())
+        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cPix);
+    else ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cMkm);
+    QImage TempImage = MainImage->pixmap().toImage();
+    int i = 0;
+
+    Progress->reset();
+    Progress->setMinimum(0);
+    Progress->setMaximum(count);
+    dataX.clear();
+    dataY.clear();
+    PlotCurveCarbides->hide();
+    ReadyStatus->setText(cWait);
+    for (;;)
+    {
+        dataX.append(i*Scale);
+        dataY.append(qRed (TempImage.pixel(x1, y1)));
+        PlotCurve->setSamples(dataX, dataY);
+        ui->MainPlot->replot();
+        QCoreApplication::processEvents();
+
+        if(x1 == x2 && y1 == y2) break;
+
+        int error2 = error * 2;
+
+        if(error2 > -deltaY)
+        {
+            error -= deltaY;
+            x1 += signX;
+        }
+
+        if(error2 < deltaX)
+        {
+            error += deltaX;
+            y1 += signY;
+        }
+        Progress->setValue(i);
+        i++;
+    }
+    Progress->setValue(count);
+    if (ui->SetMkm_action->isChecked()) LineLength->setText(cLineLength+" "+QString::number(count*Scale)+" "+cMkm);
+    else LineLength->setText(cLineLength+" "+QString::number(count)+" "+cPix);
+    ReadyStatus->setText(cReady);
+}
+
 void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
 {
     TopLeft = MainImage->mapFromScene(TopLeft);
@@ -370,6 +444,13 @@ void MainWindow::on_OpenImage_action_triggered()
 void MainWindow::MouseButtonMove()
 {
     if (ui->Line_action->isChecked())
+    {
+        //
+        LineItem->setVisible(false);
+        LineItem->setLine(Scene->getTopLeft().x(), Scene->getTopLeft().y(), Scene->getBottomRight().x(), Scene->getBottomRight().y());
+        LineItem->setVisible(true);
+    }
+    if (ui->ColorLine_action->isChecked())
     {
         //
         LineItem->setVisible(false);
@@ -451,9 +532,9 @@ void MainWindow::on_Set_Force_action_triggered()
 void MainWindow::on_About_action_triggered()
 {
     QMessageBox::about(this, tr("О программе"),
-                tr("<h2>AreaPixAnalizer v. 1.1.6</h2>"
+                tr("<h2>AreaPixAnalizer v. 1.2.0</h2>"
                    "<p>Автор: Ефременко А.В."
-                   "<p>2012"
+                   "<p>2014"
                    "<p>Программа AreaPixAnalizer предназначена для "
                    "количественного анализа фотографий микроструктуры. "
                    "Программа написана с использованием библиотек Qt и "

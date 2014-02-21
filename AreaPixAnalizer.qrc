@@ -12,5 +12,6 @@
         <file>qt80x80.png</file>
         <file>zoom_in.png</file>
         <file>Microhardness.png</file>
+        <file>diagramm.png</file>
     </qresource>
 </RCC>

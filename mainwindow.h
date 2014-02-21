@@ -74,6 +74,7 @@ private:
     QVector<double> dataX, dataY;
     QString WorkingDir;
     void Line (QPointF BeginPoint, QPointF EndPoint);
+    void ColorLine (QPointF BeginPoint, QPointF EndPoint);
     void Area (QPointF TopLeft, QPointF BottomRight);
     void BlackWhite (QPointF point);
 };

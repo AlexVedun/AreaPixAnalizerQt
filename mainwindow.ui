@@ -140,6 +140,7 @@
     <addaction name="Area_action"/>
     <addaction name="CalibrMode_action"/>
     <addaction name="Microhardness_action"/>
+    <addaction name="ColorLine_action"/>
     <addaction name="BlackWhite_action"/>
     <addaction name="separator"/>
     <addaction name="SetScale_action"/>
@@ -341,6 +342,18 @@
    </property>
    <property name="text">
     <string>О библиотеке Qt...</string>
+   </property>
+  </action>
+  <action name="ColorLine_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/diagramm.png</normaloff>:/images/diagramm.png</iconset>
+   </property>
+   <property name="text">
+    <string>Содержание элементов</string>
    </property>
   </action>
  </widget>
