@@ -32,45 +32,55 @@ MainWindow::MainWindow(QWidget *parent) :
     Diag2 = 0;
     isForceSet = false;
     //----------------------------------
-    int b = 0;
-    int g = 0;
-    int r = 0;
-    QRgb rgb;
-    for (b=0, g=0, r=0; b<=255; b++)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=255, g=0, r=0; g<=255; g++)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=255, g=255, r=0; b>=0; b--)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=0, g=255, r=0; r<=255; r++)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=0, g=255, r=255; g>=0; g--)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=0, g=0, r=255; b<=255; b++)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
-    for (b=255, g=0, r=255; g<=255; g++)
-    {
-        rgb = qRgb (r, g, b);
-        ElementTable[rgb] = 0;
-    }
+//    int b = 0;
+//    int g = 0;
+//    int r = 0;
+//    QRgb rgb;
+//    for (; b<=255; b++)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    b=255;
+//    g=0;
+//    r=0;
+//    for (; g<=255; g++)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    for (b=255, g=255, r=0; b>=0; b--)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    for (b=0, g=255, r=0; r<=255; r++)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    for (b=0, g=255, r=255; g>=0; g--)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    for (b=0, g=0, r=255; b<=255; b++)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
+//    for (b=255, g=0, r=255; g<=255; g++)
+//    {
+//        rgb = qRgb (r, g, b);
+//        ElementTable.insert(rgb, 0);
+//        //ElementTable[rgb] = 0;
+//    }
     //--------------------------------
     Scene = new QMyGraphicsScene;
     ui->ImageView->setScene(Scene);
@@ -397,6 +407,7 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
     int signY = y1 < y2 ? 1 : -1;
     int error = deltaX - deltaY;
     int count = deltaY>deltaX ? deltaY : deltaX;
+    ui->MainPlot->setAxisScale(QwtPlot::yLeft, MinElement, MaxElement);
     ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, count*Scale);
 //    if (isSetScale) ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cMkm);
     if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked())
@@ -409,23 +420,23 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
     Progress->setMinimum(0);
     Progress->setMaximum(count);
     dataX.clear();
-    //dataY.clear();
-    dataYred.clear();
-    dataYgreen.clear();
-    dataYblue.clear();
+    dataY.clear();
+    //dataYred.clear();
+    //dataYgreen.clear();
+    //dataYblue.clear();
     PlotCurveCarbides->hide();
     ReadyStatus->setText(cWait);
     for (;;)
     {
         dataX.append(i*Scale);
-        dataYred.append(qRed (TempImage.pixel(x1, y1)));
-        dataYgreen.append(qGreen (TempImage.pixel(x1, y1)));
-        dataYblue.append(qBlue (TempImage.pixel(x1, y1)));
-        PlotRed->setSamples(dataX, dataYred);
-        PlotGreen->setSamples(dataX, dataYgreen);
-        PlotBlue->setSamples(dataX, dataYblue);
-        //dataY.append(qRed (TempImage.pixel(x1, y1)));
-        //PlotCurve->setSamples(dataX, dataY);
+        //dataYred.append(qRed (TempImage.pixel(x1, y1)));
+        //dataYgreen.append(qGreen (TempImage.pixel(x1, y1)));
+        //dataYblue.append(qBlue (TempImage.pixel(x1, y1)));
+        //PlotRed->setSamples(dataX, dataYred);
+        //PlotGreen->setSamples(dataX, dataYgreen);
+        //PlotBlue->setSamples(dataX, dataYblue);
+        dataY.append(ElementTable[TempImage.pixel(x1, y1)]);
+        PlotCurve->setSamples(dataX, dataY);
         ui->MainPlot->replot();
         QCoreApplication::processEvents();
 
@@ -607,11 +618,77 @@ void MainWindow::on_About_action_triggered()
 
 void MainWindow::on_ColorLine_action_triggered()
 {
+
+}
+
+void MainWindow::on_SetElementContent_action_triggered()
+{
     SetElementDialog *SetElementWindow = new SetElementDialog ();
     if (SetElementWindow->exec() == QDialog::Accepted)
     {
         MinElement = SetElementWindow->getMinElement();
         MaxElement = SetElementWindow->getMaxElement();
+        if (MaxElement !=0)
+        {
+            //QHash <QRgb, double>::iterator it = ElementTable.begin();
+            ElementTable.clear();
+            double step = (MaxElement-MinElement) / ElementTable.size();
+            double content = MinElement;
+            // заполнение таблицы содержания элемента
+//            for (;it != ElementTable.end(); ++it)
+//            {
+//                it.value() = content;
+//                content = content+step;
+//            }
+            //----------------------------------
+            int b = 0;
+            int g = 0;
+            int r = 0;
+            QRgb rgb;
+            for (b=0, g=0, r=0; b<=255; b++)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=255, g=0, r=0; g<=255; g++)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=255, g=255, r=0; b>=0; b--)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=0, g=255, r=0; r<=255; r++)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=0, g=255, r=255; g>=0; g--)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=0, g=0, r=255; b<=255; b++)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            for (b=255, g=0, r=255; g<=255; g++)
+            {
+                rgb = qRgb (r, g, b);
+                ElementTable.insert(rgb, content);
+                content = content+step;
+            }
+            //--------------------------------
+        }
     }
     delete SetElementWindow;
 }

@@ -145,6 +145,7 @@
     <addaction name="separator"/>
     <addaction name="SetScale_action"/>
     <addaction name="Set_Force_action"/>
+    <addaction name="SetElementContent_action"/>
     <addaction name="menu_4"/>
    </widget>
    <widget class="QMenu" name="menu_5">
@@ -354,6 +355,15 @@
    </property>
    <property name="text">
     <string>Содержание элементов</string>
+   </property>
+  </action>
+  <action name="SetElementContent_action">
+   <property name="icon">
+    <iconset resource="AreaPixAnalizer.qrc">
+     <normaloff>:/images/dialog.png</normaloff>:/images/dialog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Задать содержание элемента...</string>
    </property>
   </action>
  </widget>

@@ -46,6 +46,8 @@ private slots:
 
     void on_ColorLine_action_triggered();
 
+    void on_SetElementContent_action_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -81,7 +83,7 @@ private:
     double MinElement;
     double MaxElement;
     QVector<double> dataX, dataY, dataYred, dataYgreen, dataYblue;
-    QHash<QRgb, double> ElementTable;
+    QMap<QRgb, double> ElementTable;
     QString WorkingDir;
     void Line (QPointF BeginPoint, QPointF EndPoint);
     void ColorLine (QPointF BeginPoint, QPointF EndPoint);
