@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "setscaledialog.h"
 #include "setforcedialog.h"
+#include "setelementdialog.h"
 
 const QString cReady = QString::fromLocal8Bit(" Готово ");
 const QString cWait = QString::fromLocal8Bit(" Ждите! ");
@@ -30,7 +31,47 @@ MainWindow::MainWindow(QWidget *parent) :
     Diag1 = 0;
     Diag2 = 0;
     isForceSet = false;
-
+    //----------------------------------
+    int b = 0;
+    int g = 0;
+    int r = 0;
+    QRgb rgb;
+    for (b=0, g=0, r=0; b<=255; b++)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=255, g=0, r=0; g<=255; g++)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=255, g=255, r=0; b>=0; b--)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=0, g=255, r=0; r<=255; r++)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=0, g=255, r=255; g>=0; g--)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=0, g=0, r=255; b<=255; b++)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    for (b=255, g=0, r=255; g<=255; g++)
+    {
+        rgb = qRgb (r, g, b);
+        ElementTable[rgb] = 0;
+    }
+    //--------------------------------
     Scene = new QMyGraphicsScene;
     ui->ImageView->setScene(Scene);
 
@@ -50,6 +91,20 @@ MainWindow::MainWindow(QWidget *parent) :
     PlotCurveCarbides->setRenderHint(QwtPlotItem::RenderAntialiased);
     PlotCurveCarbides->setPen(QPen(Qt::darkBlue));
     PlotCurveCarbides->attach(ui->MainPlot);
+    //-------------------------------------------
+    PlotRed = new QwtPlotCurve();
+    PlotRed->setRenderHint(QwtPlotItem::RenderAntialiased);
+    PlotRed->setPen(QPen(Qt::red));
+    PlotRed->attach(ui->MainPlot);
+    PlotGreen = new QwtPlotCurve();
+    PlotGreen->setRenderHint(QwtPlotItem::RenderAntialiased);
+    PlotGreen->setPen(QPen(Qt::green));
+    PlotGreen->attach(ui->MainPlot);
+    PlotBlue = new QwtPlotCurve();
+    PlotBlue->setRenderHint(QwtPlotItem::RenderAntialiased);
+    PlotBlue->setPen(QPen(Qt::blue));
+    PlotBlue->attach(ui->MainPlot);
+    //---------------------------------------------
     PlotPicker = new QwtPlotPicker (QwtPlot::xBottom, QwtPlot::yLeft,
                                     QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
                                     ui->MainPlot->canvas());
@@ -354,14 +409,23 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
     Progress->setMinimum(0);
     Progress->setMaximum(count);
     dataX.clear();
-    dataY.clear();
+    //dataY.clear();
+    dataYred.clear();
+    dataYgreen.clear();
+    dataYblue.clear();
     PlotCurveCarbides->hide();
     ReadyStatus->setText(cWait);
     for (;;)
     {
         dataX.append(i*Scale);
-        dataY.append(qRed (TempImage.pixel(x1, y1)));
-        PlotCurve->setSamples(dataX, dataY);
+        dataYred.append(qRed (TempImage.pixel(x1, y1)));
+        dataYgreen.append(qGreen (TempImage.pixel(x1, y1)));
+        dataYblue.append(qBlue (TempImage.pixel(x1, y1)));
+        PlotRed->setSamples(dataX, dataYred);
+        PlotGreen->setSamples(dataX, dataYgreen);
+        PlotBlue->setSamples(dataX, dataYblue);
+        //dataY.append(qRed (TempImage.pixel(x1, y1)));
+        //PlotCurve->setSamples(dataX, dataY);
         ui->MainPlot->replot();
         QCoreApplication::processEvents();
 
@@ -539,4 +603,15 @@ void MainWindow::on_About_action_triggered()
                    "количественного анализа фотографий микроструктуры. "
                    "Программа написана с использованием библиотек Qt и "
                    "Qwt (qwt.sourceforge.net)"));
+}
+
+void MainWindow::on_ColorLine_action_triggered()
+{
+    SetElementDialog *SetElementWindow = new SetElementDialog ();
+    if (SetElementWindow->exec() == QDialog::Accepted)
+    {
+        MinElement = SetElementWindow->getMinElement();
+        MaxElement = SetElementWindow->getMaxElement();
+    }
+    delete SetElementWindow;
 }

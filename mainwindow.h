@@ -44,6 +44,8 @@ private slots:
 
     void on_About_action_triggered();
 
+    void on_ColorLine_action_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -51,6 +53,11 @@ private:
     QActionGroup *MeasureUnitsGroup;
     QwtPlotCurve *PlotCurve;
     QwtPlotCurve *PlotCurveCarbides;
+    //----------------
+    QwtPlotCurve *PlotRed;
+    QwtPlotCurve *PlotGreen;
+    QwtPlotCurve *PlotBlue;
+    //-----------------
     QwtPlotGrid *grid;
     QwtPlotPicker *PlotPicker;
     QGraphicsLineItem *LineItem;
@@ -71,7 +78,10 @@ private:
     double ScaleInPixels;
     bool isSetScale;
     bool isSetScaleSegment;
-    QVector<double> dataX, dataY;
+    double MinElement;
+    double MaxElement;
+    QVector<double> dataX, dataY, dataYred, dataYgreen, dataYblue;
+    QHash<QRgb, double> ElementTable;
     QString WorkingDir;
     void Line (QPointF BeginPoint, QPointF EndPoint);
     void ColorLine (QPointF BeginPoint, QPointF EndPoint);
