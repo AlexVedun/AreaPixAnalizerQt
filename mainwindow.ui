@@ -94,7 +94,6 @@
         <number>1</number>
        </property>
       </widget>
-      <widget class="QTextEdit" name="textEdit"/>
      </widget>
     </item>
    </layout>
