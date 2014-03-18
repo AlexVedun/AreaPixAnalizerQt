@@ -83,7 +83,7 @@ private:
     double MinElement;
     double MaxElement;
     QVector<double> dataX, dataY, dataYred, dataYgreen, dataYblue;
-    QMap<QRgb, double> ElementTable;
+    QMap<QString, double> ElementTable;
     QString WorkingDir;
     void Line (QPointF BeginPoint, QPointF EndPoint);
     void ColorLine (QPointF BeginPoint, QPointF EndPoint);
