@@ -439,7 +439,7 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
         //PlotGreen->setSamples(dataX, dataYgreen);
         //PlotBlue->setSamples(dataX, dataYblue);
         dataY.append(ElementTable.value(QColor(TempImage.pixel(x1, y1)).name()));
-        qDebug() << QColor(TempImage.pixel(x1, y1)).name();
+        qDebug() << QColor(TempImage.pixel(x1, y1)).name() << ElementTable.value(QColor(TempImage.pixel(x1, y1)).name());
         PlotCurve->setSamples(dataX, dataY);
         ui->MainPlot->replot();
         QCoreApplication::processEvents();
