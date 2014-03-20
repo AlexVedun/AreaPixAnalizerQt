@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     PlotCurve = new QwtPlotCurve();
     PlotCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
     //PlotCurve->setPen(QPen(Qt::red));
-    PlotCurve->setPen(QPen(Qt::cyan));
+    PlotCurve->setPen(QPen(Qt::black));
     PlotCurve->attach(ui->MainPlot);
     PlotCurveCarbides = new QwtPlotCurve();
     PlotCurveCarbides->setRenderHint(QwtPlotItem::RenderAntialiased);
@@ -95,15 +95,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //-------------------------------------------
     PlotRed = new QwtPlotCurve();
     PlotRed->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotRed->setPen(QPen(Qt::red));
+    PlotRed->setPen(QPen(Qt::cyan));
     PlotRed->attach(ui->MainPlot);
     PlotGreen = new QwtPlotCurve();
     PlotGreen->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotGreen->setPen(QPen(Qt::green));
+    PlotGreen->setPen(QPen(Qt::yellow));
     PlotGreen->attach(ui->MainPlot);
     PlotBlue = new QwtPlotCurve();
     PlotBlue->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotBlue->setPen(QPen(Qt::blue));
+    PlotBlue->setPen(QPen(Qt::magenta));
     PlotBlue->attach(ui->MainPlot);
     //---------------------------------------------
     PlotPicker = new QwtPlotPicker (QwtPlot::xBottom, QwtPlot::yLeft,
@@ -419,13 +419,13 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
     for (;;)
     {
         dataX.append(i*Scale);
-        dataYred.append(qRed (TempImage.pixel(x1, y1)));
-        dataYgreen.append(qGreen (TempImage.pixel(x1, y1)));
-        dataYblue.append(qBlue (TempImage.pixel(x1, y1)));
+        dataYred.append(QColor (TempImage.pixel(x1, y1)).cyan());
+        dataYgreen.append(QColor (TempImage.pixel(x1, y1)).yellow());
+        dataYblue.append(QColor (TempImage.pixel(x1, y1)).magenta());
         PlotRed->setSamples(dataX, dataYred);
         PlotGreen->setSamples(dataX, dataYgreen);
         PlotBlue->setSamples(dataX, dataYblue);
-        dataY.append(qAlpha (TempImage.pixel(x1, y1)));
+        dataY.append(QColor (TempImage.pixel(x1, y1)).black());
         PlotCurve->setSamples(dataX, dataY);
         ui->MainPlot->replot();
         QCoreApplication::processEvents();
