@@ -85,7 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     grid->attach(ui->MainPlot);
     PlotCurve = new QwtPlotCurve();
     PlotCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotCurve->setPen(QPen(Qt::red));
+    //PlotCurve->setPen(QPen(Qt::red));
+    PlotCurve->setPen(QPen(Qt::cyan));
     PlotCurve->attach(ui->MainPlot);
     PlotCurveCarbides = new QwtPlotCurve();
     PlotCurveCarbides->setRenderHint(QwtPlotItem::RenderAntialiased);
@@ -409,7 +410,7 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
     Progress->setMinimum(0);
     Progress->setMaximum(count);
     dataX.clear();
-    //dataY.clear();
+    dataY.clear();
     dataYred.clear();
     dataYgreen.clear();
     dataYblue.clear();
@@ -424,8 +425,8 @@ void MainWindow::ColorLine(QPointF BeginPoint, QPointF EndPoint)
         PlotRed->setSamples(dataX, dataYred);
         PlotGreen->setSamples(dataX, dataYgreen);
         PlotBlue->setSamples(dataX, dataYblue);
-        //dataY.append(qRed (TempImage.pixel(x1, y1)));
-        //PlotCurve->setSamples(dataX, dataY);
+        dataY.append(qAlpha (TempImage.pixel(x1, y1)));
+        PlotCurve->setSamples(dataX, dataY);
         ui->MainPlot->replot();
         QCoreApplication::processEvents();
 
