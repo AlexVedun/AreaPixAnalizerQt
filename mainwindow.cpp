@@ -3,18 +3,18 @@
 #include "setscaledialog.h"
 #include "setforcedialog.h"
 
-const QString cReady = QString::fromLocal8Bit(" Готово ");
-const QString cWait = QString::fromLocal8Bit(" Ждите! ");
-const QString cPix = QString::fromLocal8Bit("пикс.");
-const QString cMkm = QString::fromLocal8Bit("мкм");
+const QString cReady = QString::fromLocal8Bit(tr (" Готово "));
+const QString cWait = QString::fromLocal8Bit(tr (" Ждите! "));
+const QString cPix = QString::fromLocal8Bit(tr ("пикс."));
+const QString cMkm = QString::fromLocal8Bit(tr ("мкм"));
 const QString cPercent = QString::fromLocal8Bit("%");
 const QString cHV = QString::fromLocal8Bit("HV");
-const QString cScaleSegment = QString::fromLocal8Bit(" Длина калибровочного отрезка: ");
-const QString cLineLength = QString::fromLocal8Bit(" Длина отрезка: ");
-const QString cScaleIsSet = QString::fromLocal8Bit(" Масштаб установлен ");
-const QString cNormalAreaPix = QString::fromLocal8Bit(" Среднее значение интенсивности: ");
-const QString cUpDownPix = QString::fromLocal8Bit(" Матрица / Карбиды: ");
-const QString cMicrohardness = QString::fromLocal8Bit(" Микротвердость: ");
+const QString cScaleSegment = QString::fromLocal8Bit(tr (" Длина калибровочного отрезка: "));
+const QString cLineLength = QString::fromLocal8Bit(tr (" Длина отрезка: "));
+const QString cScaleIsSet = QString::fromLocal8Bit(tr (" Масштаб установлен "));
+const QString cNormalAreaPix = QString::fromLocal8Bit(tr (" Среднее значение интенсивности: "));
+const QString cUpDownPix = QString::fromLocal8Bit(tr (" Матрица / Карбиды: "));
+const QString cMicrohardness = QString::fromLocal8Bit(tr (" Микротвердость: "));
 
 
 MainWindow::MainWindow(QWidget *parent) :
