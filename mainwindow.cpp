@@ -1,27 +1,32 @@
-#include "mainwindow.h"
+п»ї#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "setscaledialog.h"
 #include "setforcedialog.h"
 
-const QString cReady = QString::fromLocal8Bit(tr (" Готово "));
-const QString cWait = QString::fromLocal8Bit(tr (" Ждите! "));
-const QString cPix = QString::fromLocal8Bit(tr ("пикс."));
-const QString cMkm = QString::fromLocal8Bit(tr ("мкм"));
-const QString cPercent = QString::fromLocal8Bit("%");
-const QString cHV = QString::fromLocal8Bit("HV");
-const QString cScaleSegment = QString::fromLocal8Bit(tr (" Длина калибровочного отрезка: "));
-const QString cLineLength = QString::fromLocal8Bit(tr (" Длина отрезка: "));
-const QString cScaleIsSet = QString::fromLocal8Bit(tr (" Масштаб установлен "));
-const QString cNormalAreaPix = QString::fromLocal8Bit(tr (" Среднее значение интенсивности: "));
-const QString cUpDownPix = QString::fromLocal8Bit(tr (" Матрица / Карбиды: "));
-const QString cMicrohardness = QString::fromLocal8Bit(tr (" Микротвердость: "));
-
+const QString cReady = " Р“РѕС‚РѕРІРѕ ";
+const QString cWait = " Р–РґРёС‚Рµ ";
+const QString cPix = "РїРёРєСЃ.";
+const QString cMkm = "РјРєРј";
+const QString cPercent = "%";
+const QString cHV = "HV";
+const QString cScaleSegment = " Р”Р»РёРЅР° РєР°Р»РёР±СЂРѕРІРѕС‡РЅРѕРіРѕ РѕС‚СЂРµР·РєР°: ";
+const QString cLineLength = " Р”Р»РёРЅР° РѕС‚СЂРµР·РєР°: ";
+const QString cScaleIsSet = " РњР°СЃС€С‚Р°Р± СѓСЃС‚Р°РЅРѕРІР»РµРЅ ";
+const QString cNormalAreaPix = " РЎСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚Рё: ";
+const QString cUpDownPix = " РњР°С‚СЂРёС†Р° / РљР°СЂР±РёРґС‹: ";
+const QString cMicrohardness = " РњРёРєСЂРѕС‚РІРµСЂРґРѕСЃС‚СЊ: ";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // Layout and Toolbar fixes
+    ui->splitter->setStretchFactor(0, 5);
+    ui->splitter->setStretchFactor(1, 1);
+    ui->splitter->setSizes(QList<int>({1000, 200})); 
+    ui->mainToolBar->setIconSize(QSize(16, 16));
+    ui->mainToolBar->setStyleSheet("QToolButton { min-width: 24px; min-height: 24px; max-width: 24px; max-height: 24px; }");
 
     Scale = 1;
     isSetScale = false;
@@ -39,8 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cPix);
     grid = new QwtPlotGrid;
     grid->enableXMin(true);
-    grid->setMajPen(QPen(Qt::black,0,Qt::DotLine));
-    grid->setMinPen(QPen(Qt::gray,0,Qt::DotLine));
+    grid->setMajorPen(QPen(Qt::black,0,Qt::DotLine));
+    grid->setMinorPen(QPen(Qt::gray,0,Qt::DotLine));
     grid->attach(ui->MainPlot);
     PlotCurve = new QwtPlotCurve();
     PlotCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
@@ -102,12 +107,12 @@ MainWindow::MainWindow(QWidget *parent) :
     Progress->setAlignment(Qt::AlignHCenter);
     statusBar()->addWidget(Progress);
 
-    setGeometry((int)(QApplication::desktop()->width() - (QApplication::desktop()->width() -
-                     (QApplication::desktop()->width() / 2)) * 1.5) / 2,
-      (int)(QApplication::desktop()->height() - (QApplication::desktop()->height() -
-      (QApplication::desktop()->height() / 2)) * 1.5) / 2,
-      (int)((QApplication::desktop()->width() -  (QApplication::desktop()->width() / 2)) * 1.5),
-      (int)((QApplication::desktop()->height() - (QApplication::desktop()->height() / 2)) * 1.5));
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+    int screenWidth = screenGeometry.width();
+    int screenHeight = screenGeometry.height();
+
+    setGeometry(screenWidth / 8, screenHeight / 8, (screenWidth * 3) / 4, (screenHeight * 3) / 4);
 
     QSettings Settings;
     WorkingDir = Settings.value("/Settings/WorkingDir", "").toString();
@@ -140,19 +145,22 @@ void MainWindow::MouseButtonPress()
     if (ui->Line_action->isChecked())
     {
         //
-        LineItem = new QGraphicsLineItem (0, Scene);
+        LineItem = new QGraphicsLineItem ();
+        Scene->addItem(LineItem);
         LineItem->setPen(TempPen);
     }
     else if (ui->Area_action->isChecked())
     {
         //
-        RectItem = new QGraphicsRectItem (0, Scene);
+        RectItem = new QGraphicsRectItem ();
+        Scene->addItem(RectItem);
         RectItem->setPen(TempPen);
     }
     else if (ui->CalibrMode_action->isChecked())
     {
         //
-        LineItem = new QGraphicsLineItem (0, Scene);
+        LineItem = new QGraphicsLineItem ();
+        Scene->addItem(LineItem);
         LineItem->setPen(TempPen);
     }
     else if (ui->Microhardness_action->isChecked())
@@ -160,11 +168,12 @@ void MainWindow::MouseButtonPress()
         //
         if (isForceSet)
         {
-            LineItem = new QGraphicsLineItem (0, Scene);
+            LineItem = new QGraphicsLineItem ();
+            Scene->addItem(LineItem);
             LineItem->setPen(TempPen);
         }
-        else QMessageBox::warning(ui->centralWidget, tr("Внимание!"),
-                                  tr("Не задано значение нагрузки. Его можно задать через меню 'Режим'."),
+        else QMessageBox::warning(ui->centralWidget, tr("Р’РЅРёРјР°РЅРёРµ!"),
+                                  tr("РќРµ Р·Р°РґР°РЅРѕ Р·РЅР°С‡РµРЅРёРµ РЅР°РіСЂСѓР·РєРё. Р•РіРѕ РјРѕР¶РЅРѕ Р·Р°РґР°С‚СЊ С‡РµСЂРµР· РјРµРЅСЋ 'Р РµР¶РёРј'."),
                                   QMessageBox::Ok);
     }
 }
@@ -353,8 +362,8 @@ void MainWindow::BlackWhite(QPointF point)
 
 void MainWindow::on_OpenImage_action_triggered()
 {
-    QString ImageName = QFileDialog::getOpenFileName(0, tr("Открыть файл"), WorkingDir,
-                                                     tr("Все графические форматы (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)"));
+    QString ImageName = QFileDialog::getOpenFileName(0, tr("РћС‚РєСЂС‹С‚СЊ С„Р°Р№Р»"), WorkingDir,
+                                                     tr("Р’СЃРµ РіСЂР°С„РёС‡РµСЃРєРёРµ С„РѕСЂРјР°С‚С‹ (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)"));
     if (ImageName != "")
     {
         LineItem = NULL;
@@ -415,8 +424,8 @@ void MainWindow::on_SetScale_action_triggered()
         delete SetScaleWindow;
         isSetScaleSegment = false;
     }
-    else QMessageBox::warning(ui->centralWidget, tr("Внимание!"),
-                                      tr("Не задан калибровочный отрезок. Его необходимо задать прежде, чем устанавливать масштаб."),
+    else QMessageBox::warning(ui->centralWidget, tr("Р’РЅРёРјР°РЅРёРµ!"),
+                                      tr("РќРµ Р·Р°РґР°РЅ РєР°Р»РёР±СЂРѕРІРѕС‡РЅС‹Р№ РѕС‚СЂРµР·РѕРє. Р•РіРѕ РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°РґР°С‚СЊ РїСЂРµР¶РґРµ, С‡РµРј СѓСЃС‚Р°РЅР°РІР»РёРІР°С‚СЊ РјР°СЃС€С‚Р°Р±."),
                                       QMessageBox::Ok);
 }
 
@@ -450,12 +459,12 @@ void MainWindow::on_Set_Force_action_triggered()
 
 void MainWindow::on_About_action_triggered()
 {
-    QMessageBox::about(this, tr("О программе"),
+    QMessageBox::about(this, tr("Рћ РїСЂРѕРіСЂР°РјРјРµ"),
                 tr("<h2>AreaPixAnalizer v. 1.1.6</h2>"
-                   "<p>Автор: Ефременко А.В."
+                   "<p>РђРІС‚РѕСЂ: Р•С„СЂРµРјРµРЅРєРѕ Рђ.Р’."
                    "<p>2012"
-                   "<p>Программа AreaPixAnalizer предназначена для "
-                   "количественного анализа фотографий микроструктуры. "
-                   "Программа написана с использованием библиотек Qt и "
+                   "<p>РџСЂРѕРіСЂР°РјРјР° AreaPixAnalizer РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅР° РґР»СЏ "
+                   "РєРѕР»РёС‡РµСЃС‚РІРµРЅРЅРѕРіРѕ Р°РЅР°Р»РёР·Р° С„РѕС‚РѕРіСЂР°С„РёР№ РјРёРєСЂРѕСЃС‚СЂСѓРєС‚СѓСЂС‹. "
+                   "РџСЂРѕРіСЂР°РјРјР° РЅР°РїРёСЃР°РЅР° СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј Р±РёР±Р»РёРѕС‚РµРє Qt Рё "
                    "Qwt (qwt.sourceforge.net)"));
 }

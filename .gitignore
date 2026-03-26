@@ -1,0 +1,33 @@
+# Qt/qmake generated files
+Makefile
+Makefile.Debug
+Makefile.Release
+object_script.*
+.qmake.stash
+ui_*.h
+moc_*.cpp
+qrc_*.cpp
+
+# Build directories
+debug/
+release/
+
+# Object files and executables
+*.o
+*.obj
+*.exe
+
+# User specific files (Qt Creator)
+*.pro.user
+*.pro.user.*
+
+# IDE specific files
+.idea/
+.vs/
+*.suo
+*.user
+.qtc_clangd/
+
+# OS specific files
+Thumbs.db
+desktop.ini

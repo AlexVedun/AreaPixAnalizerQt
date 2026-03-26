@@ -4,14 +4,15 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets svg
 
 TARGET = AreaPixAnalizer
 TEMPLATE = app
 
-CONFIG += static qwt
-INCLUDEPATH += C:/Qt/Qwt-static-6.0.1/include
-LIBS += -LC:/Qt/Qwt-static-6.0.1/lib -lqwt
+CONFIG += c++17 qwt
+# Qwt was compiled as static, but it will be linked via include/lib paths
+INCLUDEPATH += C:/Qwt-6.3.0-qt6/include
+LIBS += -LC:/Qwt-6.3.0-qt6/lib -lqwt
 
 
 SOURCES += main.cpp\

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 #include <QtGui>
 #include "qmygraphicsscene.h"
 #include <qwt_plot_curve.h>
