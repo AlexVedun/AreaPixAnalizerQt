@@ -460,9 +460,9 @@ void MainWindow::on_Set_Force_action_triggered()
 void MainWindow::on_About_action_triggered()
 {
     QMessageBox::about(this, tr("О программе"),
-                tr("<h2>AreaPixAnalizer v. 1.1.6</h2>"
+                tr("<h2>AreaPixAnalizer v. 1.2.0</h2>"
                    "<p>Автор: Ефременко А.В."
-                   "<p>2012"
+                   "<p>2012-2026"
                    "<p>Программа AreaPixAnalizer предназначена для "
                    "количественного анализа фотографий микроструктуры. "
                    "Программа написана с использованием библиотек Qt и "
