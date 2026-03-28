@@ -32,3 +32,4 @@ release/
 Thumbs.db
 desktop.ini
 /areapixanalizer_plugin_import.cpp
+/lang/*.qm

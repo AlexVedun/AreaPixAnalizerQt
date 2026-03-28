@@ -13,4 +13,8 @@
         <file>zoom_in.png</file>
         <file>Microhardness.png</file>
     </qresource>
+    <qresource prefix="/lang">
+        <file alias="en.qm">lang/en.qm</file>
+        <file alias="uk.qm">lang/uk.qm</file>
+    </qresource>
 </RCC>

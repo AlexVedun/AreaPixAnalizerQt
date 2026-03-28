@@ -44,6 +44,16 @@ private slots:
     void on_Set_Force_action_triggered();
 
     void on_About_action_triggered();
+    void on_EnglishLang_action_triggered();
+    void on_RussianLang_action_triggered();
+    void on_UkrainianLang_action_triggered();
+
+protected:
+    void changeEvent(QEvent *event) override;
+
+private:
+    void switchLanguage(const QString &lang);
+    void updateStatusBarLabels();
 
 private:
     Ui::MainWindow *ui;
@@ -74,6 +84,9 @@ private:
     bool isSetScaleSegment;
     QVector<double> dataX, dataY;
     QString WorkingDir;
+    QTranslator *translator;
+    QTranslator *translatorQt;
+    QActionGroup *LanguageGroup;
     void Line (QPointF BeginPoint, QPointF EndPoint);
     void Area (QPointF TopLeft, QPointF BottomRight);
     void BlackWhite (QPointF point);

@@ -26,12 +26,12 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="sizeConstraint">
-     <enum>QLayout::SetDefaultConstraint</enum>
+     <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
     </property>
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
       <property name="opaqueResize">
        <bool>false</bool>
@@ -85,10 +85,10 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
+        <enum>QFrame::Shape::StyledPanel</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
+        <enum>QFrame::Shadow::Sunken</enum>
        </property>
        <property name="lineWidth">
         <number>1</number>
@@ -104,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>748</width>
-     <height>20</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -153,9 +153,24 @@
     <addaction name="About_action"/>
     <addaction name="AboutQt_action"/>
    </widget>
+   <widget class="QMenu" name="menu_6">
+    <property name="title">
+     <string>Вид</string>
+    </property>
+    <widget class="QMenu" name="menu_7">
+     <property name="title">
+      <string>Язык</string>
+     </property>
+     <addaction name="UkrainianLang_action"/>
+     <addaction name="EnglishLang_action"/>
+     <addaction name="RussianLang_action"/>
+    </widget>
+    <addaction name="menu_7"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
+   <addaction name="menu_6"/>
    <addaction name="menu_5"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -341,6 +356,33 @@
    </property>
    <property name="text">
     <string>О библиотеке Qt...</string>
+   </property>
+  </action>
+  <action name="EnglishLang_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Английский</string>
+   </property>
+  </action>
+  <action name="UkrainianLang_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Украинский</string>
+   </property>
+  </action>
+  <action name="RussianLang_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Русский</string>
    </property>
   </action>
  </widget>

@@ -1,26 +1,23 @@
-﻿#include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "setscaledialog.h"
 #include "setforcedialog.h"
 
-const QString cReady = " Готово ";
-const QString cWait = " Ждите ";
-const QString cPix = "пикс.";
-const QString cMkm = "мкм";
-const QString cPercent = "%";
-const QString cHV = "HV";
-const QString cScaleSegment = " Длина калибровочного отрезка: ";
-const QString cLineLength = " Длина отрезка: ";
-const QString cScaleIsSet = " Масштаб установлен ";
-const QString cNormalAreaPix = " Среднее значение интенсивности: ";
-const QString cUpDownPix = " Матрица / Карбиды: ";
-const QString cMicrohardness = " Микротвердость: ";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    
+    translator = new QTranslator(this);
+    translatorQt = new QTranslator(this);
+
+    LanguageGroup = new QActionGroup(this);
+    LanguageGroup->addAction(ui->EnglishLang_action);
+    LanguageGroup->addAction(ui->RussianLang_action);
+    LanguageGroup->addAction(ui->UkrainianLang_action);
+    ui->EnglishLang_action->setChecked(true);
     // Layout and Toolbar fixes
     ui->splitter->setStretchFactor(0, 5);
     ui->splitter->setStretchFactor(1, 1);
@@ -41,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->MainPlot->setAxisScale(QwtPlot::yLeft, 0, 255);
     ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, 1);
-    ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cPix);
+    ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("пикс."));
     grid = new QwtPlotGrid;
     grid->enableXMin(true);
     grid->setMajorPen(QPen(Qt::black,0,Qt::DotLine));
@@ -89,23 +86,26 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->BlackWhite_action->setVisible(false);
     ui->ClearMarkers_action->setVisible(false);
 
-    ReadyStatus = new QLabel (cReady);
+    ReadyStatus = new QLabel;
     //ReadyStatus->setAlignment(Qt::AlignHCenter);
     statusBar()->addWidget(ReadyStatus);
     //ScaleSegment = new QLabel (cScaleSegment);
     //statusBar()->addWidget(ScaleSegment);
-    LineLength = new QLabel (cLineLength);
+    LineLength = new QLabel;
     statusBar()->addWidget(LineLength);
-    NormalAreaPix = new QLabel (cNormalAreaPix);
+    NormalAreaPix = new QLabel;
     statusBar()->addWidget(NormalAreaPix);
-    UpDownPix = new QLabel (cUpDownPix);
+    UpDownPix = new QLabel;
     statusBar()->addWidget(UpDownPix);
-    Microhardness = new QLabel (cMicrohardness);
+    Microhardness = new QLabel;
     statusBar()->addWidget(Microhardness);
+
     Progress = new QProgressBar;
-    Progress->setMaximumSize(150, statusBar()->height());
+    Progress->setMaximumSize(100, statusBar()->height());
     Progress->setAlignment(Qt::AlignHCenter);
     statusBar()->addWidget(Progress);
+    
+    updateStatusBarLabels();
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
@@ -116,6 +116,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings Settings;
     WorkingDir = Settings.value("/Settings/WorkingDir", "").toString();
+    QString lang = Settings.value("/Settings/Language", "en").toString();
+    if (lang == "en") {
+        ui->EnglishLang_action->setChecked(true);
+    } else if (lang == "uk") {
+        ui->UkrainianLang_action->setChecked(true);
+    } else {
+        ui->RussianLang_action->setChecked(true);
+    }
+    switchLanguage(lang);
 
     connect (Scene, SIGNAL(MouseButRelease()), SLOT(MouseButtonRelease()));
     connect (Scene, SIGNAL(MouseButPress()), SLOT(MouseButtonPress()));
@@ -128,6 +137,14 @@ MainWindow::~MainWindow()
 {
     QSettings Settings;
     Settings.setValue("/Settings/WorkingDir", WorkingDir);
+    
+    QString lang = "ru";
+    if (ui->EnglishLang_action->isChecked()) {
+        lang = "en";
+    } else if (ui->UkrainianLang_action->isChecked()) {
+        lang = "uk";
+    }
+    Settings.setValue("/Settings/Language", lang);
 
     delete grid;
     delete PlotCurve;
@@ -216,7 +233,7 @@ void MainWindow::MouseButtonRelease()
                 Diag2 = count * Scale / 1000;
                 double Diag = (Diag1 + Diag2)/2;
                 double HV = 1.854 * Force / (Diag * Diag);
-                Microhardness->setText(cMicrohardness+QString::number(HV)+" "+cHV+" ");
+                Microhardness->setText(tr(" Микротвердость: ") + QString::number(HV) + " " + tr("HV") + " ");
             }
         }
     }
@@ -233,7 +250,7 @@ void MainWindow::PlotSelectPoint(QPointF pos)
     int UpCount = 0;
     int DownCount = 0;
     QVector<double> dataCarbideX, dataCarbideY;
-    ReadyStatus->setText(cWait);
+    ReadyStatus->setText(tr(" Ждите "));
     PlotCurveCarbides->show();
     for (int i = 0; i<dataX.size(); i++)
     {
@@ -254,13 +271,29 @@ void MainWindow::PlotSelectPoint(QPointF pos)
 //    if (isSetScale) UpDownPix->setText(cUpDownPix+cMkm+" "+QString::number(UpCount * Scale)+" / "+
 //                                                           QString::number(DownCount * Scale));
 //    else UpDownPix->setText(cUpDownPix+cPix+" "+QString::number(UpCount)+" / "+QString::number(DownCount));
-    if (ui->SetPix_action->isChecked()) UpDownPix->setText(cUpDownPix+cPix+" "+QString::number(UpCount)+
-                                                           " / "+QString::number(DownCount)+" ");
-    else if (ui->SetMkm_action->isChecked()) UpDownPix->setText(cUpDownPix+cMkm+" "+QString::number(UpCount * Scale)+
-                                                                " / "+QString::number(DownCount * Scale)+" ");
-    else UpDownPix->setText(cUpDownPix+cPercent+" "+QString::number((int)(UpCount*100/(UpCount+DownCount)))+
-                            " / "+QString::number((int)(DownCount*100/(UpCount+DownCount)))+" ");
-    ReadyStatus->setText(cReady);
+    if (ui->SetPix_action->isChecked()) {
+        UpDownPix->setText(
+            tr(" Матрица / Карбиды: ") +
+            tr("пикс.") + " " +
+            QString::number(UpCount) + " / " +
+            QString::number(DownCount) + " "
+        );
+    } else if (ui->SetMkm_action->isChecked()) {
+        UpDownPix->setText(
+            tr(" Матрица / Карбиды: ") +
+            tr("мкм") + " " +
+            QString::number(UpCount * Scale) + " / " +
+            QString::number(DownCount * Scale) + " "
+        );
+    } else {
+        UpDownPix->setText(
+            tr(" Матрица / Карбиды: ") +
+            tr("%") + " " +
+            QString::number((int)(UpCount * 100 / (UpCount + DownCount))) + " / " +
+            QString::number((int)(DownCount * 100 / (UpCount + DownCount))) + " "
+        );
+    }
+    ReadyStatus->setText(tr(" Готово "));
 }
 
 void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
@@ -278,10 +311,12 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     int error = deltaX - deltaY;
     int count = deltaY>deltaX ? deltaY : deltaX;
     ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, count*Scale);
-//    if (isSetScale) ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cMkm);
-    if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked())
-        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cPix);
-    else ui->MainPlot->setAxisTitle(QwtPlot::xBottom, cMkm);
+//    if (isSetScale) ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("мкм"));
+    if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked()) {
+        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("пикс."));
+    } else {
+        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("мкм"));
+    }
     QImage TempImage = MainImage->pixmap().toImage();
     int i = 0;
 
@@ -291,7 +326,7 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     dataX.clear();
     dataY.clear();
     PlotCurveCarbides->hide();
-    ReadyStatus->setText(cWait);
+    ReadyStatus->setText(tr(" Ждите "));
     for (;;)
     {
         dataX.append(i*Scale);
@@ -319,9 +354,9 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
         i++;
     }
     Progress->setValue(count);
-    if (ui->SetMkm_action->isChecked()) LineLength->setText(cLineLength+" "+QString::number(count*Scale)+" "+cMkm);
-    else LineLength->setText(cLineLength+" "+QString::number(count)+" "+cPix);
-    ReadyStatus->setText(cReady);
+    if (ui->SetMkm_action->isChecked()) LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count*Scale) + " " + tr("мкм"));
+    else LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count) + " " + tr("пикс."));
+    ReadyStatus->setText(tr(" Готово "));
 }
 
 void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
@@ -339,7 +374,7 @@ void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
     Progress->reset();
     Progress->setMinimum(x1);
     Progress->setMaximum(x2);
-    ReadyStatus->setText(cWait);
+    ReadyStatus->setText(tr(" Ждите "));
     for (int i = x1; i<=x2; i++)
     {
         for (int j = y1; j<=y2; j++)
@@ -351,8 +386,8 @@ void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
         Progress->setValue(i);
     }
     Progress->setValue(x2);
-    NormalAreaPix->setText(cNormalAreaPix+QString::number(pix/count)+" ");
-    ReadyStatus->setText(cReady);
+    NormalAreaPix->setText(tr(" Среднее значение интенсивности: ") + QString::number(pix/count) + " ");
+    ReadyStatus->setText(tr(" Готово "));
 }
 
 void MainWindow::BlackWhite(QPointF point)
@@ -419,7 +454,7 @@ void MainWindow::on_SetScale_action_triggered()
             isSetScale = true;
             ui->SetMkm_action->setEnabled(true);
             Scale = SetScaleWindow->getScale();
-            statusBar()->showMessage(cScaleIsSet, 2000);
+            statusBar()->showMessage(tr(" Масштаб установлен "), 2000);
         }
         delete SetScaleWindow;
         isSetScaleSegment = false;
@@ -467,4 +502,50 @@ void MainWindow::on_About_action_triggered()
                    "количественного анализа фотографий микроструктуры. "
                    "Программа написана с использованием библиотек Qt и "
                    "Qwt (qwt.sourceforge.net)"));
+}
+
+void MainWindow::on_EnglishLang_action_triggered()
+{
+    switchLanguage("en");
+}
+
+void MainWindow::on_RussianLang_action_triggered()
+{
+    switchLanguage("ru");
+}
+
+void MainWindow::on_UkrainianLang_action_triggered()
+{
+    switchLanguage("uk");
+}
+
+void MainWindow::switchLanguage(const QString &lang)
+{
+    qApp->removeTranslator(translator);
+    qApp->removeTranslator(translatorQt);
+
+    if (lang == "en") {
+        if (translator->load(":/lang/en.qm")) qApp->installTranslator(translator);
+    } else if (lang == "uk") {
+        if (translator->load(":/lang/uk.qm")) qApp->installTranslator(translator);
+    }
+    // For Russian, we just use the default strings in the code
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+        updateStatusBarLabels();
+    }
+    QMainWindow::changeEvent(event);
+}
+
+void MainWindow::updateStatusBarLabels()
+{
+    ReadyStatus->setText(tr(" Готово "));
+    LineLength->setText(tr(" Длина отрезка: "));
+    NormalAreaPix->setText(tr(" Среднее значение интенсивности: "));
+    UpDownPix->setText(tr(" Матрица / Карбиды: "));
+    Microhardness->setText(tr(" Микротвердость: "));
 }

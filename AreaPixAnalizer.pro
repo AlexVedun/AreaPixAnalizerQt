@@ -15,6 +15,9 @@ DEFINES += QT_STATIC
 INCLUDEPATH += C:/Qwt-6.3.0-static/include
 LIBS += -LC:/Qwt-6.3.0-static/lib -lqwt
 
+TRANSLATIONS += lang/en.ts \
+                lang/uk.ts
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \
