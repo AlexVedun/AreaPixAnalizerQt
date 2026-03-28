@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->MainPlot->setAxisScale(QwtPlot::yLeft, 0, 255);
     ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, 1);
     ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("пикс."));
+    ui->MainPlot->setPalette(this->palette());
+    ui->MainPlot->setCanvasBackground(Qt::white);
     grid = new QwtPlotGrid;
     grid->enableXMin(true);
     grid->setMajorPen(QPen(Qt::black,0,Qt::DotLine));
