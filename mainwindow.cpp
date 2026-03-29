@@ -85,7 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addAction(ui->Exit_action);
 
-    ui->BlackWhite_action->setVisible(false);
     ui->ClearMarkers_action->setVisible(false);
 
     ReadyStatus = new QLabel;
@@ -101,6 +100,8 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(UpDownPix);
     Microhardness = new QLabel;
     statusBar()->addWidget(Microhardness);
+    BlackWhiteResult = new QLabel;
+    statusBar()->addWidget(BlackWhiteResult);
 
     Progress = new QProgressBar;
     Progress->setMaximumSize(100, statusBar()->height());
@@ -242,7 +243,7 @@ void MainWindow::MouseButtonRelease()
     else if (ui->BlackWhite_action->isChecked())
     {
         //
-//        ScaleSegment->setText(cScaleSegment+QString::number(Scene->getBottomRight().x()-Scene->getTopLeft().x())+" ");
+        BlackWhite(Scene->getTopLeft());
     }
 }
 
@@ -394,7 +395,31 @@ void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
 
 void MainWindow::BlackWhite(QPointF point)
 {
-    //
+    point = MainImage->mapFromScene(point);
+    QImage TempImage = MainImage->pixmap().toImage();
+    int imageWidth = TempImage.width();
+    int imageHeight = TempImage.height();
+    int totalPixels = imageWidth * imageHeight;
+    int pointColor = qGray(TempImage.pixel(point.x(), point.y()));
+    int totalPointColorPixels = 0;
+
+    Progress->reset();
+    Progress->setMinimum(0);
+    Progress->setMaximum(totalPixels);
+    ReadyStatus->setText(tr(" Ждите "));
+    for (int i = 0; i < imageWidth; i++) {
+        for (int j = 0; j < imageHeight; j++) {
+            if (qGray(TempImage.pixel(i, j)) == pointColor) {
+                totalPointColorPixels++;
+            }
+            QCoreApplication::processEvents();
+            Progress->setValue(i * imageWidth + j);
+        }
+    }
+    Progress->setValue(totalPixels);
+    double area = static_cast<double>(totalPointColorPixels) / totalPixels * 100;
+    BlackWhiteResult->setText(tr(" Площадь: ") + QString::number(area) + " % ");
+    ReadyStatus->setText(tr(" Готово "));
 }
 
 void MainWindow::on_OpenImage_action_triggered()
@@ -550,4 +575,5 @@ void MainWindow::updateStatusBarLabels()
     NormalAreaPix->setText(tr(" Среднее значение интенсивности: "));
     UpDownPix->setText(tr(" Матрица / Карбиды: "));
     Microhardness->setText(tr(" Микротвердость: "));
+    BlackWhiteResult->setText(tr(" Площадь: "));
 }

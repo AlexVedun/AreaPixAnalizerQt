@@ -146,110 +146,118 @@
         <translation>Russian</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="183"/>
-        <location filename="../mainwindow.cpp" line="435"/>
+        <location filename="../mainwindow.cpp" line="196"/>
+        <location filename="../mainwindow.cpp" line="491"/>
         <source>Внимание!</source>
         <translation>Attention!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="184"/>
+        <location filename="../mainwindow.cpp" line="197"/>
         <source>Не задано значение нагрузки. Его можно задать через меню &apos;Режим&apos;.</source>
         <translation>Force value not set. It can be set via &apos;Mode&apos; menu.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="227"/>
-        <location filename="../mainwindow.cpp" line="523"/>
+        <location filename="../mainwindow.cpp" line="240"/>
+        <location filename="../mainwindow.cpp" line="579"/>
         <source> Микротвердость: </source>
         <translation> Microhardness: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="227"/>
+        <location filename="../mainwindow.cpp" line="240"/>
         <source>HV</source>
         <translation>HV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="265"/>
-        <location filename="../mainwindow.cpp" line="267"/>
-        <location filename="../mainwindow.cpp" line="269"/>
-        <location filename="../mainwindow.cpp" line="522"/>
+        <location filename="../mainwindow.cpp" line="281"/>
+        <location filename="../mainwindow.cpp" line="288"/>
+        <location filename="../mainwindow.cpp" line="295"/>
+        <location filename="../mainwindow.cpp" line="578"/>
         <source> Матрица / Карбиды: </source>
         <translation> Matrix / Carbides: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="42"/>
-        <location filename="../mainwindow.cpp" line="265"/>
-        <location filename="../mainwindow.cpp" line="291"/>
-        <location filename="../mainwindow.cpp" line="331"/>
+        <location filename="../mainwindow.cpp" line="41"/>
+        <location filename="../mainwindow.cpp" line="282"/>
+        <location filename="../mainwindow.cpp" line="321"/>
+        <location filename="../mainwindow.cpp" line="363"/>
         <source>пикс.</source>
         <translation>px</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="244"/>
-        <location filename="../mainwindow.cpp" line="302"/>
-        <location filename="../mainwindow.cpp" line="350"/>
+        <location filename="../mainwindow.cpp" line="258"/>
+        <location filename="../mainwindow.cpp" line="334"/>
+        <location filename="../mainwindow.cpp" line="382"/>
+        <location filename="../mainwindow.cpp" line="411"/>
         <source> Ждите </source>
         <translation> Wait </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="267"/>
-        <location filename="../mainwindow.cpp" line="292"/>
-        <location filename="../mainwindow.cpp" line="330"/>
+        <location filename="../mainwindow.cpp" line="289"/>
+        <location filename="../mainwindow.cpp" line="323"/>
+        <location filename="../mainwindow.cpp" line="362"/>
         <source>мкм</source>
         <translation>um</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="269"/>
+        <location filename="../mainwindow.cpp" line="296"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="271"/>
-        <location filename="../mainwindow.cpp" line="332"/>
-        <location filename="../mainwindow.cpp" line="363"/>
-        <location filename="../mainwindow.cpp" line="519"/>
+        <location filename="../mainwindow.cpp" line="301"/>
+        <location filename="../mainwindow.cpp" line="364"/>
+        <location filename="../mainwindow.cpp" line="395"/>
+        <location filename="../mainwindow.cpp" line="424"/>
+        <location filename="../mainwindow.cpp" line="575"/>
         <source> Готово </source>
         <translation> Ready </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="330"/>
-        <location filename="../mainwindow.cpp" line="331"/>
-        <location filename="../mainwindow.cpp" line="520"/>
+        <location filename="../mainwindow.cpp" line="362"/>
+        <location filename="../mainwindow.cpp" line="363"/>
+        <location filename="../mainwindow.cpp" line="576"/>
         <source> Длина отрезка: </source>
         <translation> Line length: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="362"/>
-        <location filename="../mainwindow.cpp" line="521"/>
+        <location filename="../mainwindow.cpp" line="394"/>
+        <location filename="../mainwindow.cpp" line="577"/>
         <source> Среднее значение интенсивности: </source>
         <translation> Average intensity: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="373"/>
+        <location filename="../mainwindow.cpp" line="423"/>
+        <location filename="../mainwindow.cpp" line="580"/>
+        <source> Площадь: </source>
+        <translation> Area: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="429"/>
         <source>Открыть файл</source>
         <translation>Open file</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="374"/>
+        <location filename="../mainwindow.cpp" line="430"/>
         <source>Все графические форматы (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</source>
         <translation>All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="430"/>
+        <location filename="../mainwindow.cpp" line="486"/>
         <source> Масштаб установлен </source>
         <translation> Scale has been set </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="436"/>
+        <location filename="../mainwindow.cpp" line="492"/>
         <source>Не задан калибровочный отрезок. Его необходимо задать прежде, чем устанавливать масштаб.</source>
         <translation>Calibration segment is not set. It must be set before setting scale.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="470"/>
+        <location filename="../mainwindow.cpp" line="526"/>
         <source>О программе</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="471"/>
+        <location filename="../mainwindow.cpp" line="527"/>
         <source>&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Автор: Ефременко А.В.&lt;p&gt;2012-2026&lt;p&gt;Программа AreaPixAnalizer предназначена для количественного анализа фотографий микроструктуры. Программа написана с использованием библиотек Qt и Qwt (qwt.sourceforge.net)</source>
         <translation>&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Author: Efremenko A.V.&lt;p&gt;2012-2026&lt;p&gt;AreaPixAnalizer program is designed for quantitative analysis of microstructure photos. The program is written using Qt and Qwt libraries (qwt.sourceforge.net)</translation>
     </message>

@@ -72,6 +72,7 @@ private:
     QLabel *NormalAreaPix;
     QLabel *UpDownPix;
     QLabel *Microhardness;
+    QLabel *BlackWhiteResult;
     QProgressBar *Progress;
     double Scale;
     double Force;
