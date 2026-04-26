@@ -53,7 +53,7 @@
         </size>
        </property>
       </widget>
-      <widget class="QwtPlot" name="MainPlot">
+      <widget class="QFrame" name="MainPlot">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -387,14 +387,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="AreaPixAnalizer.qrc"/>
  </resources>

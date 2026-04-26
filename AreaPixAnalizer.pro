@@ -4,20 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets svg
+QT       += core gui widgets svg charts
 
 TARGET = AreaPixAnalizer
 TEMPLATE = app
 
-CONFIG += c++17 qwt static
+CONFIG += c++17 static
 DEFINES += QT_STATIC
-# Qwt was compiled as static, but it will be linked via include/lib paths
-INCLUDEPATH += C:/Qwt-6.3.0-static/include
-LIBS += -LC:/Qwt-6.3.0-static/lib -lqwt
 
 TRANSLATIONS += lang/en.ts \
                 lang/uk.ts
-
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -36,11 +32,3 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     AreaPixAnalizer.qrc
-
-
-
-
-
-
-
-

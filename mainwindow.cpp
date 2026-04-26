@@ -35,30 +35,80 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Scene = new QMyGraphicsScene;
     ui->ImageView->setScene(Scene);
+    MainChart = new QChart();
+    MainChart->legend()->hide();
+    MainChart->setMargins(QMargins(0, 0, 0, 0));
+    MainChart->setBackgroundVisible(true);
+    MainChart->setBackgroundBrush(QBrush(Qt::white));
+    MainChart->setPlotAreaBackgroundVisible(true);
+    MainChart->setPlotAreaBackgroundBrush(QBrush(Qt::white));
+    MainChart->setBackgroundRoundness(0);
+    MainChart->setDropShadowEnabled(false);
+    MainChart->layout()->setContentsMargins(0, 0, 0, 0);
 
-    ui->MainPlot->setAxisScale(QwtPlot::yLeft, 0, 255);
-    ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, 1);
-    ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("пикс."));
-    ui->MainPlot->setPalette(this->palette());
-    ui->MainPlot->setCanvasBackground(Qt::white);
-    grid = new QwtPlotGrid;
-    grid->enableXMin(true);
-    grid->setMajorPen(QPen(Qt::black,0,Qt::DotLine));
-    grid->setMinorPen(QPen(Qt::gray,0,Qt::DotLine));
-    grid->attach(ui->MainPlot);
-    PlotCurve = new QwtPlotCurve();
-    PlotCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotCurve->setPen(QPen(Qt::red));
-    PlotCurve->attach(ui->MainPlot);
-    PlotCurveCarbides = new QwtPlotCurve();
-    PlotCurveCarbides->setRenderHint(QwtPlotItem::RenderAntialiased);
-    PlotCurveCarbides->setPen(QPen(Qt::darkBlue));
-    PlotCurveCarbides->attach(ui->MainPlot);
-    PlotPicker = new QwtPlotPicker (QwtPlot::xBottom, QwtPlot::yLeft,
-                                    QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
-                                    ui->MainPlot->canvas());
-    PlotPicker->setStateMachine(new QwtPickerClickPointMachine);
+    PlotCurve = new QLineSeries();
+    PlotCurve->setColor(Qt::red);
+    PlotCurveCarbides = new QLineSeries();
+    PlotCurveCarbides->setColor(Qt::darkBlue);
 
+    MainChart->addSeries(PlotCurve);
+    MainChart->addSeries(PlotCurveCarbides);
+
+    AxisX = new QValueAxis();
+    AxisX->setRange(0.0, 1.0);
+    AxisX->setTitleText(tr("пикс."));
+    AxisX->setLabelFormat("%.0f");
+    AxisX->setTickType(QValueAxis::TicksDynamic);
+    AxisX->setTickAnchor(0.0);
+    AxisX->setTickInterval(100.0);
+    AxisX->setMinorTickCount(1);
+    AxisX->setGridLineVisible(true);
+    AxisX->setMinorGridLineVisible(true);
+    AxisX->setLabelsColor(Qt::black);
+    AxisX->setTitleBrush(QBrush(Qt::black));
+    AxisX->setLinePen(QPen(Qt::black));
+    AxisX->setGridLinePen(QPen(QColor(190, 190, 190), 1, Qt::DotLine));
+    AxisX->setMinorGridLinePen(QPen(QColor(220, 220, 220), 1, Qt::DotLine));
+
+    AxisY = new QValueAxis();
+    AxisY->setRange(0.0, 260.0);
+    AxisY->setLabelFormat("%.0f");
+    AxisY->setTickType(QValueAxis::TicksFixed);
+    AxisY->setTickCount(6);
+    AxisY->setMinorTickCount(1);
+    AxisY->setTruncateLabels(false);
+    AxisY->setGridLineVisible(true);
+    AxisY->setMinorGridLineVisible(true);
+    AxisY->setLabelsColor(Qt::black);
+    AxisY->setTitleBrush(QBrush(Qt::black));
+    AxisY->setLinePen(QPen(Qt::black));
+    AxisY->setGridLinePen(QPen(QColor(190, 190, 190), 1, Qt::DotLine));
+    AxisY->setMinorGridLinePen(QPen(QColor(220, 220, 220), 1, Qt::DotLine));
+
+    MainChart->addAxis(AxisX, Qt::AlignBottom);
+    MainChart->addAxis(AxisY, Qt::AlignLeft);
+    PlotCurve->attachAxis(AxisX);
+    PlotCurve->attachAxis(AxisY);
+    PlotCurveCarbides->attachAxis(AxisX);
+    PlotCurveCarbides->attachAxis(AxisY);
+
+    MainChartView = new QChartView(MainChart, ui->MainPlot);
+    MainChartView->setRenderHint(QPainter::Antialiasing);
+    MainChartView->setFrameShape(QFrame::StyledPanel);
+    MainChartView->setFrameShadow(QFrame::Sunken);
+    MainChartView->setRubberBand(QChartView::NoRubberBand);
+    MainChartView->setMouseTracking(true);
+    MainChartView->viewport()->setCursor(Qt::CrossCursor);
+
+    PlotCursorText = MainChart->scene()->addSimpleText(QString());
+    PlotCursorText->setBrush(QBrush(Qt::black));
+    PlotCursorText->setZValue(20.0);
+    hidePlotCursorOverlay();
+
+    auto *plotLayout = new QVBoxLayout(ui->MainPlot);
+    plotLayout->setContentsMargins(0, 0, 0, 0);
+    plotLayout->addWidget(MainChartView);
+    MainChartView->viewport()->installEventFilter(this);
     ModeGroup = new QActionGroup(this);
     ModeGroup->addAction(ui->Line_action);
     ModeGroup->addAction(ui->Area_action);
@@ -69,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent) :
     MeasureUnitsGroup->addAction(ui->SetPix_action);
     MeasureUnitsGroup->addAction(ui->SetMkm_action);
     MeasureUnitsGroup->addAction(ui->SetPercent_action);
+    updateXAxisTitle();
 
     ui->mainToolBar->addAction(ui->OpenImage_action);
     ui->mainToolBar->addSeparator();
@@ -132,7 +183,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect (Scene, SIGNAL(MouseButRelease()), SLOT(MouseButtonRelease()));
     connect (Scene, SIGNAL(MouseButPress()), SLOT(MouseButtonPress()));
     connect (Scene, SIGNAL(MouseButMove()), SLOT(MouseButtonMove()));
-    connect (PlotPicker, SIGNAL(selected(QPointF)), SLOT(PlotSelectPoint(QPointF)));
     connect (ui->AboutQt_action, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
@@ -149,10 +199,6 @@ MainWindow::~MainWindow()
     }
     Settings.setValue("/Settings/Language", lang);
 
-    delete grid;
-    delete PlotCurve;
-    delete PlotCurveCarbides;
-    delete PlotPicker;
     delete Scene;
     delete ui;
 }
@@ -249,28 +295,28 @@ void MainWindow::MouseButtonRelease()
 
 void MainWindow::PlotSelectPoint(QPointF pos)
 {
-    int CheckPoint = pos.y();
+    const int CheckPoint = pos.y();
     int UpCount = 0;
     int DownCount = 0;
-    QVector<double> dataCarbideX, dataCarbideY;
+    QVector<QPointF> carbidePoints;
+    carbidePoints.reserve(dataX.size());
+
     ReadyStatus->setText(tr(" Ждите "));
-    PlotCurveCarbides->show();
-    for (int i = 0; i<dataX.size(); i++)
+    PlotCurveCarbides->setVisible(true);
+    for (int i = 0; i < dataX.size(); i++)
     {
-        dataCarbideX.append(dataX[i]);
-        if (dataY[i]>=CheckPoint)
+        if (dataY[i] >= CheckPoint)
         {
-            dataCarbideY.append(CheckPoint);
+            carbidePoints.append(QPointF(dataX[i], CheckPoint));
             UpCount++;
         }
         else
         {
-            dataCarbideY.append(0);
+            carbidePoints.append(QPointF(dataX[i], 0));
             DownCount++;
         }
-        PlotCurveCarbides->setSamples(dataCarbideX, dataCarbideY);
-        ui->MainPlot->replot();
     }
+    PlotCurveCarbides->replace(carbidePoints);
 //    if (isSetScale) UpDownPix->setText(cUpDownPix+cMkm+" "+QString::number(UpCount * Scale)+" / "+
 //                                                           QString::number(DownCount * Scale));
 //    else UpDownPix->setText(cUpDownPix+cPix+" "+QString::number(UpCount)+" / "+QString::number(DownCount));
@@ -313,13 +359,15 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     int signY = y1 < y2 ? 1 : -1;
     int error = deltaX - deltaY;
     int count = deltaY>deltaX ? deltaY : deltaX;
-    ui->MainPlot->setAxisScale(QwtPlot::xBottom, 0, count*Scale);
-//    if (isSetScale) ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("мкм"));
+    AxisX->setRange(0.0, count * Scale);
+    AxisX->setTickAnchor(0.0);
     if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked()) {
-        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("пикс."));
+        AxisX->setTickInterval(100.0);
     } else {
-        ui->MainPlot->setAxisTitle(QwtPlot::xBottom, tr("мкм"));
+        AxisX->setTickInterval(100.0 * Scale);
     }
+//    if (isSetScale) AxisX->setTitleText(tr("мкм"));
+    updateXAxisTitle();
     QImage TempImage = MainImage->pixmap().toImage();
     int i = 0;
 
@@ -328,14 +376,15 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     Progress->setMaximum(count);
     dataX.clear();
     dataY.clear();
-    PlotCurveCarbides->hide();
+    QVector<QPointF> linePoints;
+    linePoints.reserve(count + 1);
+    PlotCurveCarbides->setVisible(false);
     ReadyStatus->setText(tr(" Ждите "));
     for (;;)
     {
         dataX.append(i*Scale);
         dataY.append(255-qGray (TempImage.pixel(x1, y1)));
-        PlotCurve->setSamples(dataX, dataY);
-        ui->MainPlot->replot();
+        linePoints.append(QPointF(dataX.back(), dataY.back()));
         QCoreApplication::processEvents();
 
         if(x1 == x2 && y1 == y2) break;
@@ -356,6 +405,7 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
         Progress->setValue(i);
         i++;
     }
+    PlotCurve->replace(linePoints);
     Progress->setValue(count);
     if (ui->SetMkm_action->isChecked()) LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count*Scale) + " " + tr("мкм"));
     else LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count) + " " + tr("пикс."));
@@ -526,9 +576,7 @@ void MainWindow::on_About_action_triggered()
                    "<p>Автор: Ефременко А.В."
                    "<p>2012-2026"
                    "<p>Программа AreaPixAnalizer предназначена для "
-                   "количественного анализа фотографий микроструктуры. "
-                   "Программа написана с использованием библиотек Qt и "
-                   "Qwt (qwt.sourceforge.net)"));
+                   "количественного анализа фотографий микроструктуры."));
 }
 
 void MainWindow::on_EnglishLang_action_triggered()
@@ -559,11 +607,74 @@ void MainWindow::switchLanguage(const QString &lang)
     // For Russian, we just use the default strings in the code
 }
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == MainChartView->viewport()) {
+        if (event->type() == QEvent::MouseMove) {
+            auto *mouseEvent = dynamic_cast<QMouseEvent *>(event);
+            updatePlotCursorOverlay(mouseEvent->position());
+            return false;
+        }
+        if (event->type() == QEvent::Leave) {
+            hidePlotCursorOverlay();
+            return false;
+        }
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto *mouseEvent = dynamic_cast<QMouseEvent *>(event);
+            const QPointF valuePos = MainChart->mapToValue(mouseEvent->position(), PlotCurve);
+            PlotSelectPoint(valuePos);
+            return false;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::updateXAxisTitle()
+{
+    if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked()) {
+        AxisX->setTitleText(tr("пикс."));
+    } else {
+        AxisX->setTitleText(tr("мкм"));
+    }
+}
+void MainWindow::updatePlotCursorOverlay(const QPointF &viewPos)
+{
+    const QRectF plotArea = MainChart->plotArea();
+    const QPointF scenePos = MainChartView->mapToScene(viewPos.toPoint());
+
+    if (!plotArea.contains(scenePos)) {
+        hidePlotCursorOverlay();
+        return;
+    }
+
+    const QPointF valuePos = MainChart->mapToValue(scenePos, PlotCurve);
+    const qreal xValue = qMax(AxisX->min(), qMin(AxisX->max(), valuePos.x()));
+    const qreal yValue = qMax(AxisY->min(), qMin(AxisY->max(), valuePos.y()));
+    PlotCursorText->setText(QString::number(xValue, 'f', 4) + ", " + QString::number(yValue, 'f', 4));
+
+    QPointF textPos = scenePos + QPointF(10.0, -10.0);
+    const QRectF textRect = PlotCursorText->boundingRect();
+    if (textPos.x() + textRect.width() > plotArea.right()) {
+        textPos.setX(scenePos.x() - textRect.width() - 10.0);
+    }
+    if (textPos.y() < plotArea.top()) {
+        textPos.setY(scenePos.y() + 10.0);
+    }
+    PlotCursorText->setPos(textPos);
+    PlotCursorText->setVisible(true);
+}
+
+void MainWindow::hidePlotCursorOverlay()
+{
+    PlotCursorText->setVisible(false);
+}
+
 void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
         updateStatusBarLabels();
+        updateXAxisTitle();
     }
     QMainWindow::changeEvent(event);
 }

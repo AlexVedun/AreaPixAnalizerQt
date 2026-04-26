@@ -4,11 +4,11 @@
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QtGui>
+#include <QtCharts/QChartView>
+#include <QtCharts/QChart>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 #include "qmygraphicsscene.h"
-#include <qwt_plot_curve.h>
-#include <qwt_plot_grid.h>
-#include <qwt_plot_picker.h>
-#include <qwt_picker_machine.h>
 
 namespace Ui {
     class MainWindow;
@@ -23,7 +23,8 @@ public:
     QGraphicsPixmapItem *MainImage;
 
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    ~MainWindow() override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
     void MouseButtonPress();
@@ -54,16 +55,21 @@ protected:
 private:
     void switchLanguage(const QString &lang);
     void updateStatusBarLabels();
+    void updateXAxisTitle();
+    void updatePlotCursorOverlay(const QPointF &viewPos);
+    void hidePlotCursorOverlay();
 
-private:
     Ui::MainWindow *ui;
 
     QActionGroup *ModeGroup;
     QActionGroup *MeasureUnitsGroup;
-    QwtPlotCurve *PlotCurve;
-    QwtPlotCurve *PlotCurveCarbides;
-    QwtPlotGrid *grid;
-    QwtPlotPicker *PlotPicker;
+    QChartView *MainChartView;
+    QChart *MainChart;
+    QLineSeries *PlotCurve;
+    QLineSeries *PlotCurveCarbides;
+    QValueAxis *AxisX;
+    QValueAxis *AxisY;
+    QGraphicsSimpleTextItem *PlotCursorText;
     QGraphicsLineItem *LineItem;
     QGraphicsRectItem *RectItem;
     QLabel *ReadyStatus;
