@@ -1,17 +1,17 @@
 <RCC>
     <qresource prefix="/images">
-        <file>zoom_out.png</file>
-        <file>bin.png</file>
-        <file>designmoo.png</file>
-        <file>dialog.png</file>
-        <file>door_out.png</file>
-        <file>draw_line.png</file>
-        <file>draw_polygon.png</file>
-        <file>folder.png</file>
-        <file>measure.png</file>
-        <file>qt80x80.png</file>
-        <file>zoom_in.png</file>
-        <file>Microhardness.png</file>
+        <file alias="zoom_out.png">icons/zoom_out.png</file>
+        <file alias="bin.png">icons/bin.png</file>
+        <file alias="designmoo.png">icons/designmoo.png</file>
+        <file alias="dialog.png">icons/dialog.png</file>
+        <file alias="door_out.png">icons/door_out.png</file>
+        <file alias="draw_line.png">icons/draw_line.png</file>
+        <file alias="draw_polygon.png">icons/draw_polygon.png</file>
+        <file alias="folder.png">icons/folder.png</file>
+        <file alias="measure.png">icons/measure.png</file>
+        <file alias="qt80x80.png">icons/qt80x80.png</file>
+        <file alias="zoom_in.png">icons/zoom_in.png</file>
+        <file alias="Microhardness.png">icons/Microhardness.png</file>
     </qresource>
     <qresource prefix="/lang">
         <file alias="en.qm">lang/en.qm</file>
