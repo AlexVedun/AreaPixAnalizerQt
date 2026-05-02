@@ -12,6 +12,7 @@
         <file alias="qt80x80.png">icons/qt80x80.png</file>
         <file alias="zoom_in.png">icons/zoom_in.png</file>
         <file alias="Microhardness.png">icons/Microhardness.png</file>
+        <file alias="app_icon.svg">icons/app_icon.svg</file>
     </qresource>
     <qresource prefix="/lang">
         <file alias="en.qm">lang/en.qm</file>

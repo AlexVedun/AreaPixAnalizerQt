@@ -32,3 +32,5 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     AreaPixAnalizer.qrc
+
+win32:RC_FILE += app_icon.rc
