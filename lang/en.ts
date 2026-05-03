@@ -10,282 +10,384 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="112"/>
-        <source>Файл</source>
+        <source>File</source>
         <translation>File</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="118"/>
-        <source>Изображение</source>
+        <source>Image</source>
         <translation>Image</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="129"/>
-        <source>Режим</source>
+        <source>Mode</source>
         <translation>Mode</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="133"/>
-        <source>Единицы измерения</source>
+        <source>Units</source>
         <translation>Units</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="151"/>
-        <source>Справка</source>
+        <source>Help</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="158"/>
-        <source>Вид</source>
+        <location filename="../mainwindow.ui" line="160"/>
+        <source>View</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="162"/>
-        <source>Язык</source>
+        <location filename="../mainwindow.ui" line="164"/>
+        <source>Language</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="191"/>
-        <source>Выход</source>
+        <location filename="../mainwindow.ui" line="193"/>
+        <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="200"/>
-        <source>Открыть...</source>
+        <location filename="../mainwindow.ui" line="202"/>
+        <source>Open...</source>
         <translation>Open...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="215"/>
-        <source>Линия</source>
+        <location filename="../mainwindow.ui" line="217"/>
+        <source>Line</source>
         <translation>Line</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="227"/>
-        <source>Область</source>
+        <location filename="../mainwindow.ui" line="229"/>
+        <source>Area</source>
         <translation>Area</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="239"/>
-        <source>Калибровка</source>
+        <location filename="../mainwindow.ui" line="241"/>
+        <source>Calibration</source>
         <translation>Calibration</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="248"/>
-        <location filename="../mainwindow.ui" line="251"/>
-        <source>Задать масштаб...</source>
+        <location filename="../mainwindow.ui" line="250"/>
+        <location filename="../mainwindow.ui" line="253"/>
+        <source>Set Scale...</source>
         <translation>Set Scale...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="260"/>
-        <source>Увеличить</source>
+        <location filename="../mainwindow.ui" line="262"/>
+        <source>Zoom In</source>
         <translation>Zoom In</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="269"/>
-        <source>Уменьшить</source>
+        <location filename="../mainwindow.ui" line="271"/>
+        <source>Zoom Out</source>
         <translation>Zoom Out</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="281"/>
-        <source>Черное / белое</source>
+        <location filename="../mainwindow.ui" line="283"/>
+        <source>Black / White</source>
         <translation>Black / White</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="290"/>
-        <source>Очистить маркеры</source>
+        <location filename="../mainwindow.ui" line="292"/>
+        <source>Clear Markers</source>
         <translation>Clear Markers</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="301"/>
-        <source>Пиксели</source>
+        <location filename="../mainwindow.ui" line="303"/>
+        <source>Pixels</source>
         <translation>Pixels</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="312"/>
-        <source>Микрометры</source>
+        <location filename="../mainwindow.ui" line="314"/>
+        <source>Micrometers</source>
         <translation>Micrometers</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="320"/>
-        <source>Проценты</source>
+        <location filename="../mainwindow.ui" line="322"/>
+        <source>Percent</source>
         <translation>Percent</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="329"/>
-        <location filename="../mainwindow.ui" line="332"/>
-        <source>Задать нагрузку...</source>
+        <location filename="../mainwindow.ui" line="331"/>
+        <location filename="../mainwindow.ui" line="334"/>
+        <source>Set Force...</source>
         <translation>Set Force...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="344"/>
-        <source>Микротвердость</source>
+        <location filename="../mainwindow.ui" line="346"/>
+        <source>Microhardness</source>
         <translation>Microhardness</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="349"/>
-        <source>О программе...</source>
+        <location filename="../mainwindow.ui" line="351"/>
+        <location filename="../mainwindow.cpp" line="760"/>
+        <location filename="../mainwindow.cpp" line="785"/>
+        <location filename="../mainwindow.cpp" line="795"/>
+        <location filename="../mainwindow.cpp" line="822"/>
+        <location filename="../mainwindow.cpp" line="825"/>
+        <location filename="../mainwindow.cpp" line="830"/>
+        <location filename="../mainwindow.cpp" line="843"/>
+        <location filename="../mainwindow.cpp" line="894"/>
+        <location filename="../mainwindow.cpp" line="917"/>
+        <location filename="../mainwindow.cpp" line="923"/>
+        <location filename="../mainwindow.cpp" line="930"/>
+        <location filename="../mainwindow.cpp" line="936"/>
+        <location filename="../mainwindow.cpp" line="942"/>
+        <source>Update</source>
+        <translation>Update</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="356"/>
+        <source>About...</source>
         <translation>About...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="358"/>
-        <source>О библиотеке Qt...</source>
+        <location filename="../mainwindow.ui" line="365"/>
+        <source>About Qt...</source>
         <translation>About Qt...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="366"/>
-        <source>Английский</source>
+        <location filename="../mainwindow.ui" line="373"/>
+        <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="377"/>
-        <source>Украинский</source>
+        <location filename="../mainwindow.ui" line="384"/>
+        <source>Ukrainian</source>
         <translation>Ukrainian</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="385"/>
-        <source>Русский</source>
+        <location filename="../mainwindow.ui" line="392"/>
+        <source>Russian</source>
         <translation>Russian</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="240"/>
-        <location filename="../mainwindow.cpp" line="538"/>
-        <source>Внимание!</source>
+        <location filename="../mainwindow.cpp" line="78"/>
+        <location filename="../mainwindow.cpp" line="365"/>
+        <location filename="../mainwindow.cpp" line="450"/>
+        <location filename="../mainwindow.cpp" line="681"/>
+        <source>px</source>
+        <translation>px</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="751"/>
+        <source> No updates </source>
+        <translation> No updates </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="280"/>
+        <location filename="../mainwindow.cpp" line="578"/>
+        <source>Attention!</source>
         <translation>Attention!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="241"/>
-        <source>Не задано значение нагрузки. Его можно задать через меню &apos;Режим&apos;.</source>
+        <location filename="../mainwindow.cpp" line="281"/>
+        <source>Force value not set. It can be set via &apos;Mode&apos; menu.</source>
         <translation>Force value not set. It can be set via &apos;Mode&apos; menu.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="284"/>
-        <location filename="../mainwindow.cpp" line="687"/>
-        <source> Микротвердость: </source>
-        <translation> Microhardness: </translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="284"/>
+        <location filename="../mainwindow.cpp" line="324"/>
         <source>HV</source>
         <translation>HV</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="324"/>
-        <location filename="../mainwindow.cpp" line="331"/>
-        <location filename="../mainwindow.cpp" line="338"/>
-        <location filename="../mainwindow.cpp" line="686"/>
-        <source> Матрица / Карбиды: </source>
-        <translation> Matrix / Carbides: </translation>
+        <location filename="../mainwindow.cpp" line="734"/>
+        <source> Microhardness: </source>
+        <translation> Microhardness: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="59"/>
-        <location filename="../mainwindow.cpp" line="325"/>
-        <location filename="../mainwindow.cpp" line="410"/>
-        <location filename="../mainwindow.cpp" line="634"/>
-        <source>пикс.</source>
-        <translation>px</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="303"/>
-        <location filename="../mainwindow.cpp" line="381"/>
-        <location filename="../mainwindow.cpp" line="429"/>
-        <location filename="../mainwindow.cpp" line="458"/>
-        <source> Ждите </source>
+        <location filename="../mainwindow.cpp" line="343"/>
+        <location filename="../mainwindow.cpp" line="421"/>
+        <location filename="../mainwindow.cpp" line="469"/>
+        <location filename="../mainwindow.cpp" line="498"/>
+        <source> Wait </source>
         <translation> Wait </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="332"/>
-        <location filename="../mainwindow.cpp" line="409"/>
-        <location filename="../mainwindow.cpp" line="636"/>
-        <source>мкм</source>
+        <location filename="../mainwindow.cpp" line="364"/>
+        <location filename="../mainwindow.cpp" line="371"/>
+        <location filename="../mainwindow.cpp" line="378"/>
+        <location filename="../mainwindow.cpp" line="733"/>
+        <source> Matrix / Carbides: </source>
+        <translation> Matrix / Carbides: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="372"/>
+        <location filename="../mainwindow.cpp" line="449"/>
+        <location filename="../mainwindow.cpp" line="683"/>
+        <source>um</source>
         <translation>um</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="339"/>
-        <source>%</source>
-        <translation>%</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="344"/>
-        <location filename="../mainwindow.cpp" line="411"/>
-        <location filename="../mainwindow.cpp" line="442"/>
-        <location filename="../mainwindow.cpp" line="471"/>
-        <location filename="../mainwindow.cpp" line="683"/>
-        <source> Готово </source>
+        <location filename="../mainwindow.cpp" line="384"/>
+        <location filename="../mainwindow.cpp" line="451"/>
+        <location filename="../mainwindow.cpp" line="482"/>
+        <location filename="../mainwindow.cpp" line="511"/>
+        <location filename="../mainwindow.cpp" line="730"/>
+        <source> Ready </source>
         <translation> Ready </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="409"/>
-        <location filename="../mainwindow.cpp" line="410"/>
-        <location filename="../mainwindow.cpp" line="684"/>
-        <source> Длина отрезка: </source>
+        <location filename="../mainwindow.cpp" line="449"/>
+        <location filename="../mainwindow.cpp" line="450"/>
+        <location filename="../mainwindow.cpp" line="731"/>
+        <source> Line length: </source>
         <translation> Line length: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="441"/>
-        <location filename="../mainwindow.cpp" line="685"/>
-        <source> Среднее значение интенсивности: </source>
+        <location filename="../mainwindow.cpp" line="481"/>
+        <location filename="../mainwindow.cpp" line="732"/>
+        <source> Average intensity: </source>
         <translation> Average intensity: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="470"/>
-        <location filename="../mainwindow.cpp" line="688"/>
-        <source> Площадь: </source>
+        <location filename="../mainwindow.cpp" line="510"/>
+        <location filename="../mainwindow.cpp" line="735"/>
+        <source> Area: </source>
         <translation> Area: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="476"/>
-        <source>Открыть файл</source>
+        <location filename="../mainwindow.cpp" line="516"/>
+        <source>Open file</source>
         <translation>Open file</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="477"/>
-        <source>Все графические форматы (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</source>
-        <translation>All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="533"/>
-        <source> Масштаб установлен </source>
-        <translation> Scale has been set </translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="539"/>
-        <source>Не задан калибровочный отрезок. Его необходимо задать прежде, чем устанавливать масштаб.</source>
-        <translation>Calibration segment is not set. It must be set before setting scale.</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="573"/>
-        <source>О программе</source>
+        <location filename="../mainwindow.cpp" line="613"/>
+        <source>About</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="574"/>
-        <source>&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Автор: Ефременко А.В.&lt;p&gt;2012-2026&lt;p&gt;Программа AreaPixAnalizer предназначена для количественного анализа фотографий микроструктуры.</source>
-        <translation>&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Author: Efremenko A.V.&lt;p&gt;2012-2026&lt;p&gt;AreaPixAnalizer program is designed for quantitative analysis of microstructure photos.</translation>
+        <location filename="../mainwindow.cpp" line="760"/>
+        <source>Update check is already in progress.</source>
+        <translation>Update check is already in progress.</translation>
     </message>
     <message>
-        <source>&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Автор: Ефременко А.В.&lt;p&gt;2012-2026&lt;p&gt;Программа AreaPixAnalizer предназначена для количественного анализа фотографий микроструктуры. Программа написана с использованием библиотек Qt и Qwt (qwt.sourceforge.net)</source>
-        <translation type="vanished">&lt;h2&gt;AreaPixAnalizer v. 1.2.0&lt;/h2&gt;&lt;p&gt;Author: Efremenko A.V.&lt;p&gt;2012-2026&lt;p&gt;AreaPixAnalizer program is designed for quantitative analysis of microstructure photos. The program is written using Qt and Qwt libraries (qwt.sourceforge.net)</translation>
+        <location filename="../mainwindow.cpp" line="742"/>
+        <location filename="../mainwindow.cpp" line="767"/>
+        <source> Checking updates... </source>
+        <translation> Checking updates... </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="748"/>
+        <location filename="../mainwindow.cpp" line="782"/>
+        <source> Update check failed </source>
+        <translation> Update check failed </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="785"/>
+        <source>Failed to check updates.</source>
+        <translation>Failed to check updates.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="795"/>
+        <source>Invalid response from GitHub.</source>
+        <translation>Invalid response from GitHub.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="745"/>
+        <location filename="../mainwindow.cpp" line="818"/>
+        <source> Program update available </source>
+        <translation> Program update available </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="614"/>
+        <source>&lt;h2&gt;AreaPixAnalizer&lt;/h2&gt;&lt;p&gt;v. %1&lt;p&gt;Author: Efremenko A.V.&lt;p&gt;2012-2026&lt;p&gt;AreaPixAnalizer program is designed for quantitative analysis of microstructure photos.</source>
+        <translation>&lt;h2&gt;AreaPixAnalizer&lt;/h2&gt;&lt;p&gt;v. %1&lt;p&gt;Author: Efremenko A.V.&lt;p&gt;2012-2026&lt;p&gt;AreaPixAnalizer program is designed for quantitative analysis of microstructure photos.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="824"/>
+        <source>Version %1 is available</source>
+        <translation>Version %1 is available</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="826"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="831"/>
+        <source>Update is ready. Restart now?</source>
+        <translation>Update is ready. Restart now?</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="843"/>
+        <source>The current version is up to date.</source>
+        <translation>The current version is up to date.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="894"/>
+        <source>Failed to download update archive.</source>
+        <translation>Failed to download update archive.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="917"/>
+        <source>Failed to unpack update archive.</source>
+        <translation>Failed to unpack update archive.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="923"/>
+        <source>Application exe was not found in archive.</source>
+        <translation>Application exe was not found in archive.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="930"/>
+        <source>Failed to prepare temporary exe file.</source>
+        <translation>Failed to prepare temporary exe file.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="936"/>
+        <source>Failed to read new exe file.</source>
+        <translation>Failed to read new exe file.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="942"/>
+        <source>Failed to save new exe file.</source>
+        <translation>Failed to save new exe file.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="517"/>
+        <source>All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</source>
+        <translation>All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="573"/>
+        <source> Scale has been set </source>
+        <translation> Scale has been set </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="579"/>
+        <source>Calibration segment is not set. It must be set before setting scale.</source>
+        <translation>Calibration segment is not set. It must be set before setting scale.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="379"/>
+        <source>%</source>
+        <translation>%</translation>
     </message>
 </context>
 <context>
     <name>SetForceDialog</name>
     <message>
         <location filename="../setforcedialog.ui" line="29"/>
-        <source>Установка величины нагрузки</source>
+        <source>Set force value</source>
         <translation>Set force value</translation>
     </message>
     <message>
         <location filename="../setforcedialog.ui" line="51"/>
-        <source>Величина нагрузки</source>
+        <source>Force value</source>
         <translation>Force value</translation>
     </message>
     <message>
         <location filename="../setforcedialog.ui" line="74"/>
-        <source>Готово</source>
+        <source>Ready</source>
         <translation>Ready</translation>
     </message>
     <message>
         <location filename="../setforcedialog.ui" line="87"/>
-        <source>кгс</source>
+        <source>kgf</source>
         <translation>kgf</translation>
     </message>
 </context>
@@ -293,52 +395,52 @@
     <name>SetScaleDialog</name>
     <message>
         <location filename="../setscaledialog.ui" line="35"/>
-        <source>Установка масштаба</source>
+        <source>Set scale</source>
         <translation>Set scale</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="57"/>
-        <source>Готово</source>
+        <source>Ready</source>
         <translation>Ready</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="70"/>
-        <source>Длина контрольного отрезка</source>
+        <source>Calibration length</source>
         <translation>Calibration length</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="94"/>
-        <source>10 мкм</source>
+        <source>10 um</source>
         <translation>10 um</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="101"/>
-        <source>1 мм</source>
+        <source>1 mm</source>
         <translation>1 mm</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="111"/>
-        <source>100 мкм</source>
+        <source>100 um</source>
         <translation>100 um</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="118"/>
-        <source>50 мкм</source>
+        <source>50 um</source>
         <translation>50 um</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="125"/>
-        <source>1 мкм</source>
+        <source>1 um</source>
         <translation>1 um</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="175"/>
-        <source>мкм</source>
+        <source>um</source>
         <translation>um</translation>
     </message>
     <message>
         <location filename="../setscaledialog.ui" line="198"/>
-        <source>Задайте длину контрольного отрезка</source>
+        <source>Specify calibration length</source>
         <translation>Specify calibration length</translation>
     </message>
 </context>

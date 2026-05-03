@@ -2,11 +2,30 @@
 #include "ui_mainwindow.h"
 #include "setscaledialog.h"
 #include "setforcedialog.h"
+#include <QCoreApplication>
+#include <QDir>
+#include <QDirIterator>
+#include <QEventLoop>
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QProcess>
+#include <QTemporaryDir>
+#include <QTemporaryFile>
+#include <QTimer>
 
+static auto kCurrentVersion = "1.2.0";
+static auto kReleaseApiUrl = "https://api.github.com/repos/AlexVedun/AreaPixAnalizerQt/releases/latest";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    networkManager(new QNetworkAccessManager(this)),
+    updateCheckInProgress(false)
 {
     ui->setupUi(this);
     
@@ -56,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     AxisX = new QValueAxis();
     AxisX->setRange(0.0, 1.0);
-    AxisX->setTitleText(tr("пикс."));
+    AxisX->setTitleText(tr("px"));
     AxisX->setLabelFormat("%.0f");
     AxisX->setTickType(QValueAxis::TicksDynamic);
     AxisX->setTickAnchor(0.0);
@@ -153,6 +172,10 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(Microhardness);
     BlackWhiteResult = new QLabel;
     statusBar()->addWidget(BlackWhiteResult);
+    UpdateStatus = new QLabel;
+    currentUpdateMsgType = UpdateNone;
+    UpdateStatus->hide();
+    statusBar()->addPermanentWidget(UpdateStatus);
 
     Progress = new QProgressBar;
     Progress->setMaximumSize(100, statusBar()->height());
@@ -179,6 +202,22 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->RussianLang_action->setChecked(true);
     }
     switchLanguage(lang);
+    cleanupOldExecutable();
+    connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
+        if (pendingUpdateExePath.isEmpty()) {
+            return;
+        }
+
+        const QString appPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
+        const QFileInfo appInfo(appPath);
+        const QString oldExe = QDir::toNativeSeparators(
+            appInfo.absolutePath() + "/" + appInfo.completeBaseName() + "_old." + appInfo.suffix());
+        const QString newExe = QDir::toNativeSeparators(pendingUpdateExePath);
+        const QString command = QString("timeout /t 1 /nobreak >nul && if exist \"%1\" del /f /q \"%2\" && move /y \"%1\" \"%2\" >nul && copy /y \"%3\" \"%1\" >nul && start \"\" \"%1\"")
+                                    .arg(appPath, oldExe, newExe);
+        QProcess::startDetached("cmd.exe", QStringList() << "/c" << command, appInfo.absolutePath());
+    });
+    QTimer::singleShot(0, this, [this]() { checkForUpdates(false); });
 
     connect (Scene, SIGNAL(MouseButRelease()), SLOT(MouseButtonRelease()));
     connect (Scene, SIGNAL(MouseButPress()), SLOT(MouseButtonPress()));
@@ -238,8 +277,8 @@ void MainWindow::MouseButtonPress()
             Scene->addItem(LineItem);
             LineItem->setPen(TempPen);
         }
-        else QMessageBox::warning(ui->centralWidget, tr("Внимание!"),
-                                  tr("Не задано значение нагрузки. Его можно задать через меню 'Режим'."),
+        else QMessageBox::warning(ui->centralWidget, tr("Attention!"),
+                                  tr("Force value not set. It can be set via 'Mode' menu."),
                                   QMessageBox::Ok);
     }
 }
@@ -282,7 +321,7 @@ void MainWindow::MouseButtonRelease()
                 Diag2 = count * Scale / 1000;
                 double Diag = (Diag1 + Diag2)/2;
                 double HV = 1.854 * Force / (Diag * Diag);
-                Microhardness->setText(tr(" Микротвердость: ") + QString::number(HV) + " " + tr("HV") + " ");
+                Microhardness->setText(tr(" Microhardness: ") + QString::number(HV) + " " + tr("HV") + " ");
             }
         }
     }
@@ -301,7 +340,7 @@ void MainWindow::PlotSelectPoint(QPointF pos)
     QVector<QPointF> carbidePoints;
     carbidePoints.reserve(dataX.size());
 
-    ReadyStatus->setText(tr(" Ждите "));
+    ReadyStatus->setText(tr(" Wait "));
     PlotCurveCarbides->setVisible(true);
     for (int i = 0; i < dataX.size(); i++)
     {
@@ -322,27 +361,27 @@ void MainWindow::PlotSelectPoint(QPointF pos)
 //    else UpDownPix->setText(cUpDownPix+cPix+" "+QString::number(UpCount)+" / "+QString::number(DownCount));
     if (ui->SetPix_action->isChecked()) {
         UpDownPix->setText(
-            tr(" Матрица / Карбиды: ") +
-            tr("пикс.") + " " +
+            tr(" Matrix / Carbides: ") +
+            tr("px") + " " +
             QString::number(UpCount) + " / " +
             QString::number(DownCount) + " "
         );
     } else if (ui->SetMkm_action->isChecked()) {
         UpDownPix->setText(
-            tr(" Матрица / Карбиды: ") +
-            tr("мкм") + " " +
+            tr(" Matrix / Carbides: ") +
+            tr("um") + " " +
             QString::number(UpCount * Scale) + " / " +
             QString::number(DownCount * Scale) + " "
         );
     } else {
         UpDownPix->setText(
-            tr(" Матрица / Карбиды: ") +
+            tr(" Matrix / Carbides: ") +
             tr("%") + " " +
             QString::number((int)(UpCount * 100 / (UpCount + DownCount))) + " / " +
             QString::number((int)(DownCount * 100 / (UpCount + DownCount))) + " "
         );
     }
-    ReadyStatus->setText(tr(" Готово "));
+    ReadyStatus->setText(tr(" Ready "));
 }
 
 void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
@@ -366,7 +405,7 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     } else {
         AxisX->setTickInterval(100.0 * Scale);
     }
-//    if (isSetScale) AxisX->setTitleText(tr("мкм"));
+//    if (isSetScale) AxisX->setTitleText(tr("um"));
     updateXAxisTitle();
     QImage TempImage = MainImage->pixmap().toImage();
     int i = 0;
@@ -379,7 +418,7 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     QVector<QPointF> linePoints;
     linePoints.reserve(count + 1);
     PlotCurveCarbides->setVisible(false);
-    ReadyStatus->setText(tr(" Ждите "));
+    ReadyStatus->setText(tr(" Wait "));
     for (;;)
     {
         dataX.append(i*Scale);
@@ -407,9 +446,9 @@ void MainWindow::Line(QPointF BeginPoint, QPointF EndPoint)
     }
     PlotCurve->replace(linePoints);
     Progress->setValue(count);
-    if (ui->SetMkm_action->isChecked()) LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count*Scale) + " " + tr("мкм"));
-    else LineLength->setText(tr(" Длина отрезка: ") + " " + QString::number(count) + " " + tr("пикс."));
-    ReadyStatus->setText(tr(" Готово "));
+    if (ui->SetMkm_action->isChecked()) LineLength->setText(tr(" Line length: ") + " " + QString::number(count*Scale) + " " + tr("um"));
+    else LineLength->setText(tr(" Line length: ") + " " + QString::number(count) + " " + tr("px"));
+    ReadyStatus->setText(tr(" Ready "));
 }
 
 void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
@@ -427,7 +466,7 @@ void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
     Progress->reset();
     Progress->setMinimum(x1);
     Progress->setMaximum(x2);
-    ReadyStatus->setText(tr(" Ждите "));
+    ReadyStatus->setText(tr(" Wait "));
     for (int i = x1; i<=x2; i++)
     {
         for (int j = y1; j<=y2; j++)
@@ -439,8 +478,8 @@ void MainWindow::Area(QPointF TopLeft, QPointF BottomRight)
         Progress->setValue(i);
     }
     Progress->setValue(x2);
-    NormalAreaPix->setText(tr(" Среднее значение интенсивности: ") + QString::number(pix/count) + " ");
-    ReadyStatus->setText(tr(" Готово "));
+    NormalAreaPix->setText(tr(" Average intensity: ") + QString::number(pix/count) + " ");
+    ReadyStatus->setText(tr(" Ready "));
 }
 
 void MainWindow::BlackWhite(QPointF point)
@@ -456,7 +495,7 @@ void MainWindow::BlackWhite(QPointF point)
     Progress->reset();
     Progress->setMinimum(0);
     Progress->setMaximum(totalPixels);
-    ReadyStatus->setText(tr(" Ждите "));
+    ReadyStatus->setText(tr(" Wait "));
     for (int i = 0; i < imageWidth; i++) {
         for (int j = 0; j < imageHeight; j++) {
             if (qGray(TempImage.pixel(i, j)) == pointColor) {
@@ -468,14 +507,14 @@ void MainWindow::BlackWhite(QPointF point)
     }
     Progress->setValue(totalPixels);
     double area = static_cast<double>(totalPointColorPixels) / totalPixels * 100;
-    BlackWhiteResult->setText(tr(" Площадь: ") + QString::number(area) + " % ");
-    ReadyStatus->setText(tr(" Готово "));
+    BlackWhiteResult->setText(tr(" Area: ") + QString::number(area) + " % ");
+    ReadyStatus->setText(tr(" Ready "));
 }
 
 void MainWindow::on_OpenImage_action_triggered()
 {
-    QString ImageName = QFileDialog::getOpenFileName(0, tr("Открыть файл"), WorkingDir,
-                                                     tr("Все графические форматы (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)"));
+    QString ImageName = QFileDialog::getOpenFileName(0, tr("Open file"), WorkingDir,
+                                                     tr("All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)"));
     if (ImageName != "")
     {
         LineItem = NULL;
@@ -531,13 +570,13 @@ void MainWindow::on_SetScale_action_triggered()
             isSetScale = true;
             ui->SetMkm_action->setEnabled(true);
             Scale = SetScaleWindow->getScale();
-            statusBar()->showMessage(tr(" Масштаб установлен "), 2000);
+            statusBar()->showMessage(tr(" Scale has been set "), 2000);
         }
         delete SetScaleWindow;
         isSetScaleSegment = false;
     }
-    else QMessageBox::warning(ui->centralWidget, tr("Внимание!"),
-                                      tr("Не задан калибровочный отрезок. Его необходимо задать прежде, чем устанавливать масштаб."),
+    else QMessageBox::warning(ui->centralWidget, tr("Attention!"),
+                                      tr("Calibration segment is not set. It must be set before setting scale."),
                                       QMessageBox::Ok);
 }
 
@@ -571,12 +610,13 @@ void MainWindow::on_Set_Force_action_triggered()
 
 void MainWindow::on_About_action_triggered()
 {
-    QMessageBox::about(this, tr("О программе"),
-                tr("<h2>AreaPixAnalizer v. 1.2.0</h2>"
-                   "<p>Автор: Ефременко А.В."
-                   "<p>2012-2026"
-                   "<p>Программа AreaPixAnalizer предназначена для "
-                   "количественного анализа фотографий микроструктуры."));
+    QMessageBox::about(this, tr("About"),
+                tr("<h2>AreaPixAnalizer</h2>"
+                    "<p>v. %1"
+                    "<p>Author: Efremenko A.V."
+                    "<p>2012-2026"
+                    "<p>AreaPixAnalizer program is designed for "
+                    "quantitative analysis of microstructure photos.").arg(kCurrentVersion));
 }
 
 void MainWindow::on_EnglishLang_action_triggered()
@@ -594,6 +634,11 @@ void MainWindow::on_UkrainianLang_action_triggered()
     switchLanguage("uk");
 }
 
+void MainWindow::on_Update_action_triggered()
+{
+    checkForUpdates(true);
+}
+
 void MainWindow::switchLanguage(const QString &lang)
 {
     qApp->removeTranslator(translator);
@@ -601,10 +646,11 @@ void MainWindow::switchLanguage(const QString &lang)
 
     if (lang == "en") {
         if (translator->load(":/lang/en.qm")) qApp->installTranslator(translator);
+    } else if (lang == "ru") {
+        if (translator->load(":/lang/ru.qm")) qApp->installTranslator(translator);
     } else if (lang == "uk") {
         if (translator->load(":/lang/uk.qm")) qApp->installTranslator(translator);
     }
-    // For Russian, we just use the default strings in the code
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
@@ -632,9 +678,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 void MainWindow::updateXAxisTitle()
 {
     if (ui->SetPix_action->isChecked() || ui->SetPercent_action->isChecked()) {
-        AxisX->setTitleText(tr("пикс."));
+        AxisX->setTitleText(tr("px"));
     } else {
-        AxisX->setTitleText(tr("мкм"));
+        AxisX->setTitleText(tr("um"));
     }
 }
 void MainWindow::updatePlotCursorOverlay(const QPointF &viewPos)
@@ -681,10 +727,240 @@ void MainWindow::changeEvent(QEvent *event)
 
 void MainWindow::updateStatusBarLabels()
 {
-    ReadyStatus->setText(tr(" Готово "));
-    LineLength->setText(tr(" Длина отрезка: "));
-    NormalAreaPix->setText(tr(" Среднее значение интенсивности: "));
-    UpDownPix->setText(tr(" Матрица / Карбиды: "));
-    Microhardness->setText(tr(" Микротвердость: "));
-    BlackWhiteResult->setText(tr(" Площадь: "));
+    ReadyStatus->setText(tr(" Ready "));
+    LineLength->setText(tr(" Line length: "));
+    NormalAreaPix->setText(tr(" Average intensity: "));
+    UpDownPix->setText(tr(" Matrix / Carbides: "));
+    Microhardness->setText(tr(" Microhardness: "));
+    BlackWhiteResult->setText(tr(" Area: "));
+
+    switch (currentUpdateMsgType) {
+        case UpdateNone:
+            UpdateStatus->setText("");
+            break;
+        case UpdateChecking:
+            UpdateStatus->setText(tr(" Checking updates... "));
+            break;
+        case UpdateAvailable:
+            UpdateStatus->setText(tr(" Program update available "));
+            break;
+        case UpdateFailed:
+            UpdateStatus->setText(tr(" Update check failed "));
+            break;
+        case UpdateUpToDate:
+            UpdateStatus->setText(tr(" No updates "));
+            break;
+    }
+}
+
+void MainWindow::checkForUpdates(bool userInitiated)
+{
+    if (updateCheckInProgress) {
+        if (userInitiated) {
+            QMessageBox::information(this, tr("Update"), tr("Update check is already in progress."));
+        }
+        return;
+    }
+    updateCheckInProgress = true;
+    if (userInitiated) {
+        currentUpdateMsgType = UpdateChecking;
+        UpdateStatus->setText(tr(" Checking updates... "));
+        UpdateStatus->show();
+    }
+
+    QNetworkRequest request{QUrl(QString::fromLatin1(kReleaseApiUrl))};
+    request.setRawHeader("User-Agent", "AreaPixAnalizerQt");
+    QNetworkReply *reply = networkManager->get(request);
+    connect(reply, &QNetworkReply::finished, this, [this, reply, userInitiated]() {
+        updateCheckInProgress = false;
+        const QByteArray body = reply->readAll();
+        const bool hasError = reply->error() != QNetworkReply::NoError;
+        reply->deleteLater();
+
+        if (hasError) {
+            currentUpdateMsgType = UpdateFailed;
+            UpdateStatus->setText(tr(" Update check failed "));
+            UpdateStatus->show();
+            if (userInitiated) {
+                QMessageBox::warning(this, tr("Update"), tr("Failed to check updates."));
+            }
+            return;
+        }
+
+        const QJsonDocument doc = QJsonDocument::fromJson(body);
+        if (!doc.isObject()) {
+            currentUpdateMsgType = UpdateFailed;
+            UpdateStatus->hide();
+            if (userInitiated) {
+                QMessageBox::warning(this, tr("Update"), tr("Invalid response from GitHub."));
+            }
+            return;
+        }
+
+        const QJsonObject root = doc.object();
+        const QString remoteVersion = normalizedVersionString(root.value("tag_name").toString());
+        const QJsonArray assets = root.value("assets").toArray();
+        QString downloadUrl;
+        for (const QJsonValue &value : assets) {
+            const QJsonObject asset = value.toObject();
+            const QString name = asset.value("name").toString();
+            if (name.endsWith(".zip", Qt::CaseInsensitive)) {
+                downloadUrl = asset.value("browser_download_url").toString();
+                break;
+            }
+        }
+
+        latestVersion = remoteVersion;
+        latestDownloadUrl = downloadUrl;
+
+        if (!downloadUrl.isEmpty() && isRemoteVersionNewer(remoteVersion)) {
+            currentUpdateMsgType = UpdateAvailable;
+            UpdateStatus->setText(tr(" Program update available "));
+            UpdateStatus->show();
+            if (userInitiated) {
+                QMessageBox msg(this);
+                msg.setWindowTitle(tr("Update"));
+                msg.setIcon(QMessageBox::Information);
+                msg.setText(tr("Version %1 is available").arg(remoteVersion));
+                QPushButton *updateButton = msg.addButton(tr("Update"), QMessageBox::AcceptRole);
+                msg.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                msg.exec();
+
+                if (msg.clickedButton() == updateButton && prepareAndScheduleUpdate(downloadUrl)) {
+                    const auto answer = QMessageBox::question(this, tr("Update"),
+                                                               tr("Update is ready. Restart now?"),
+                                                               QMessageBox::Ok | QMessageBox::Cancel,
+                                                               QMessageBox::Ok);
+                    if (answer == QMessageBox::Ok) {
+                        qApp->quit();
+                    }
+                }
+            }
+        } else {
+            currentUpdateMsgType = UpdateUpToDate;
+            UpdateStatus->hide();
+            if (userInitiated) {
+                QMessageBox::information(this, tr("Update"), tr("The current version is up to date."));
+            }
+        }
+    });
+}
+
+void MainWindow::cleanupOldExecutable()
+{
+    const QFileInfo appInfo(QCoreApplication::applicationFilePath());
+    const QString oldExe = appInfo.absolutePath() + "/" + appInfo.completeBaseName() + "_old." + appInfo.suffix();
+    if (QFile::exists(oldExe)) {
+        QFile::remove(oldExe);
+    }
+}
+
+bool MainWindow::isRemoteVersionNewer(const QString &remoteVersion) const
+{
+    const QVersionNumber remote = QVersionNumber::fromString(normalizedVersionString(remoteVersion));
+    const QVersionNumber current = QVersionNumber::fromString(QString::fromLatin1(kCurrentVersion));
+    return QVersionNumber::compare(remote.normalized(), current.normalized()) > 0;
+}
+
+QString MainWindow::normalizedVersionString(const QString &version) const
+{
+    QString v = version.trimmed();
+    if (v.startsWith('v', Qt::CaseInsensitive)) {
+        v.remove(0, 1);
+    }
+    return v;
+}
+
+bool MainWindow::prepareAndScheduleUpdate(const QString &downloadUrl)
+{
+    const QString appPath = QCoreApplication::applicationFilePath();
+    const QFileInfo appInfo(appPath);
+    const QString appDir = appInfo.absolutePath();
+    const QString oldExe = appDir + "/" + appInfo.completeBaseName() + "_old." + appInfo.suffix();
+
+    QTemporaryDir tempDir;
+    if (!tempDir.isValid()) {
+        return false;
+    }
+
+    QNetworkRequest request{QUrl(downloadUrl)};
+    request.setRawHeader("User-Agent", "AreaPixAnalizerQt");
+    QNetworkReply *reply = networkManager->get(request);
+    QEventLoop waitLoop;
+    connect(reply, &QNetworkReply::finished, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+    if (reply->error() != QNetworkReply::NoError) {
+        reply->deleteLater();
+        QMessageBox::warning(this, tr("Update"), tr("Failed to download update archive."));
+        return false;
+    }
+
+    const QString zipPath = tempDir.path() + "/update.zip";
+    QFile zipFile(zipPath);
+    if (!zipFile.open(QIODevice::WriteOnly)) {
+        reply->deleteLater();
+        return false;
+    }
+    zipFile.write(reply->readAll());
+    zipFile.close();
+    reply->deleteLater();
+
+    const QString extractDir = tempDir.path() + "/extract";
+    QDir().mkpath(extractDir);
+    const int unpackResult = QProcess::execute("powershell", QStringList()
+                                               << "-NoProfile"
+                                               << "-Command"
+                                               << QString("Expand-Archive -Path '%1' -DestinationPath '%2' -Force")
+                                                     .arg(QDir::toNativeSeparators(zipPath),
+                                                          QDir::toNativeSeparators(extractDir)));
+    if (unpackResult != 0) {
+        QMessageBox::warning(this, tr("Update"), tr("Failed to unpack update archive."));
+        return false;
+    }
+
+    const QString newExePath = findExtractedExePath(extractDir, appInfo.fileName());
+    if (newExePath.isEmpty()) {
+        QMessageBox::warning(this, tr("Update"), tr("Application exe was not found in archive."));
+        return false;
+    }
+
+    QTemporaryFile stagedExe(appDir + "/AreaPixAnalizer_update_XXXXXX.exe");
+    stagedExe.setAutoRemove(false);
+    if (!stagedExe.open()) {
+        QMessageBox::warning(this, tr("Update"), tr("Failed to prepare temporary exe file."));
+        return false;
+    }
+
+    QFile newExeFile(newExePath);
+    if (!newExeFile.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, tr("Update"), tr("Failed to read new exe file."));
+        return false;
+    }
+
+    const QByteArray newExeData = newExeFile.readAll();
+    if (stagedExe.write(newExeData) != newExeData.size()) {
+        QMessageBox::warning(this, tr("Update"), tr("Failed to save new exe file."));
+        return false;
+    }
+    stagedExe.close();
+
+    pendingUpdateExePath = stagedExe.fileName();
+    return true;
+}
+
+QString MainWindow::findExtractedExePath(const QString &rootDir, const QString &targetFileName) const
+{
+    QDirIterator exactIt(rootDir, QStringList() << "*.exe", QDir::Files, QDirIterator::Subdirectories);
+    while (exactIt.hasNext()) {
+        const QString file = exactIt.next();
+        if (QFileInfo(file).fileName().compare(targetFileName, Qt::CaseInsensitive) == 0) {
+            return file;
+        }
+    }
+
+    QDirIterator anyIt(rootDir, QStringList() << "*.exe", QDir::Files, QDirIterator::Subdirectories);
+    if (anyIt.hasNext()) {
+        return anyIt.next();
+    }
+    return {};
 }

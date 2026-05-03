@@ -8,6 +8,8 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include <QNetworkAccessManager>
+#include <QVersionNumber>
 #include "qmygraphicsscene.h"
 
 namespace Ui {
@@ -48,6 +50,7 @@ private slots:
     void on_EnglishLang_action_triggered();
     void on_RussianLang_action_triggered();
     void on_UkrainianLang_action_triggered();
+    void on_Update_action_triggered();
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -58,6 +61,20 @@ private:
     void updateXAxisTitle();
     void updatePlotCursorOverlay(const QPointF &viewPos);
     void hidePlotCursorOverlay();
+    void checkForUpdates(bool userInitiated);
+    void cleanupOldExecutable();
+    bool isRemoteVersionNewer(const QString &remoteVersion) const;
+    QString normalizedVersionString(const QString &version) const;
+    bool prepareAndScheduleUpdate(const QString &downloadUrl);
+    QString findExtractedExePath(const QString &rootDir, const QString &targetFileName) const;
+    enum UpdateMsgType {
+        UpdateNone,
+        UpdateChecking,
+        UpdateAvailable,
+        UpdateFailed,
+        UpdateUpToDate
+    };
+    UpdateMsgType currentUpdateMsgType;
 
     Ui::MainWindow *ui;
 
@@ -79,6 +96,7 @@ private:
     QLabel *UpDownPix;
     QLabel *Microhardness;
     QLabel *BlackWhiteResult;
+    QLabel *UpdateStatus;
     QProgressBar *Progress;
     double Scale;
     double Force;
@@ -94,6 +112,11 @@ private:
     QTranslator *translator;
     QTranslator *translatorQt;
     QActionGroup *LanguageGroup;
+    QNetworkAccessManager *networkManager;
+    bool updateCheckInProgress;
+    QString latestVersion;
+    QString latestDownloadUrl;
+    QString pendingUpdateExePath;
     void Line (QPointF BeginPoint, QPointF EndPoint);
     void Area (QPointF TopLeft, QPointF BottomRight);
     void BlackWhite (QPointF point);
