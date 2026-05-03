@@ -12,9 +12,10 @@ Q_IMPORT_PLUGIN(QSvgIconPlugin)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QCoreApplication::setOrganizationName ("Efremenko_A_V") ;
-    QCoreApplication::setApplicationName ("AreaPixAnalizer") ;
-    a.setWindowIcon(QIcon(":/images/app_icon.svg"));
+    QApplication::setOrganizationName ("Efremenko_A_V") ;
+    QApplication::setApplicationName ("AreaPixAnalizer") ;
+    QApplication::setApplicationVersion("1.2.0");
+    QApplication::setWindowIcon(QIcon(":/images/app_icon.svg"));
     MainWindow w;
     w.show();
 

@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Установка величины нагрузки</string>
+   <string>Set force value</string>
   </property>
   <property name="windowIcon">
    <iconset resource="AreaPixAnalizer.qrc">
@@ -48,7 +48,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Величина нагрузки</string>
+    <string>Force value</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit">
@@ -71,7 +71,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Готово</string>
+    <string>Ready</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -84,7 +84,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>кгс</string>
+    <string>kgf</string>
    </property>
   </widget>
  </widget>

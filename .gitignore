@@ -5,6 +5,7 @@ Makefile.Release
 object_script.*
 .qmake.stash
 ui_*.h
+_uic_*.h
 moc_*.cpp
 qrc_*.cpp
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets svg charts
+QT       += core gui widgets svg charts network
 
 TARGET = AreaPixAnalizer
 TEMPLATE = app
@@ -13,6 +13,7 @@ CONFIG += c++17 static
 DEFINES += QT_STATIC
 
 TRANSLATIONS += lang/en.ts \
+                lang/ru.ts \
                 lang/uk.ts
 
 SOURCES += main.cpp\
