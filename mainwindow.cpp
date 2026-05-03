@@ -249,37 +249,33 @@ void MainWindow::MouseButtonPress()
     QPen TempPen;
     TempPen.setColor(Qt::red);
     TempPen.setWidth(2);
-    if (ui->Line_action->isChecked())
-    {
+
+    if (!MainImage) {
+        return;
+    }
+
+    if (ui->Line_action->isChecked()) {
         //
         LineItem = new QGraphicsLineItem ();
         Scene->addItem(LineItem);
         LineItem->setPen(TempPen);
-    }
-    else if (ui->Area_action->isChecked())
-    {
+    } else if (ui->Area_action->isChecked()) {
         //
         RectItem = new QGraphicsRectItem ();
         Scene->addItem(RectItem);
         RectItem->setPen(TempPen);
-    }
-    else if (ui->CalibrMode_action->isChecked())
-    {
+    } else if (ui->CalibrMode_action->isChecked()) {
         //
         LineItem = new QGraphicsLineItem ();
         Scene->addItem(LineItem);
         LineItem->setPen(TempPen);
-    }
-    else if (ui->Microhardness_action->isChecked())
-    {
+    } else if (ui->Microhardness_action->isChecked()) {
         //
-        if (isForceSet)
-        {
+        if (isForceSet) {
             LineItem = new QGraphicsLineItem ();
             Scene->addItem(LineItem);
             LineItem->setPen(TempPen);
-        }
-        else QMessageBox::warning(ui->centralWidget, tr("Attention!"),
+        } else QMessageBox::warning(ui->centralWidget, tr("Attention!"),
                                   tr("Force value not set. It can be set via 'Mode' menu."),
                                   QMessageBox::Ok);
     }
@@ -287,38 +283,31 @@ void MainWindow::MouseButtonPress()
 
 void MainWindow::MouseButtonRelease()
 {
-    if (ui->Line_action->isChecked())
-    {
+    if (!MainImage) {
+        return;
+    }
+
+    if (ui->Line_action->isChecked()) {
         //
         Line (Scene->getTopLeft(), Scene->getBottomRight());
-    }
-    else if (ui->Area_action->isChecked())
-    {
+    } else if (ui->Area_action->isChecked()) {
         //
         Area (Scene->getTopLeft(), Scene->getBottomRight());
-    }
-    else if (ui->CalibrMode_action->isChecked())
-    {
+    } else if (ui->CalibrMode_action->isChecked()) {
         //
         ScaleInPixels = Scene->getBottomRight().x()-Scene->getTopLeft().x();
         //ScaleSegment->setText(cScaleSegment+QString::number(ScaleInPixels)+" ");
         isSetScaleSegment = true;
-    }
-    else if (ui->Microhardness_action->isChecked())
-    {
+    } else if (ui->Microhardness_action->isChecked()) {
         //
-        if (isForceSet)
-        {
+        if (isForceSet) {
             int deltaX = abs(Scene->getBottomRight().x() - Scene->getTopLeft().x());
             int deltaY = abs(Scene->getBottomRight().y() - Scene->getTopLeft().y());
             int count = deltaY>deltaX ? deltaY : deltaX;
-            if (isDiag1)
-            {
+            if (isDiag1) {
                 isDiag1 = false;
                 Diag1 = count * Scale / 1000;
-            }
-            else
-            {
+            } else {
                 isDiag1 = true;
                 Diag2 = count * Scale / 1000;
                 double Diag = (Diag1 + Diag2)/2;
@@ -326,9 +315,7 @@ void MainWindow::MouseButtonRelease()
                 Microhardness->setText(tr(" Microhardness: ") + QString::number(HV) + " " + tr("HV") + " ");
             }
         }
-    }
-    else if (ui->BlackWhite_action->isChecked())
-    {
+    } else if (ui->BlackWhite_action->isChecked()) {
         //
         BlackWhite(Scene->getTopLeft());
     }
@@ -515,13 +502,13 @@ void MainWindow::BlackWhite(QPointF point)
 
 void MainWindow::on_OpenImage_action_triggered()
 {
-    QString ImageName = QFileDialog::getOpenFileName(0, tr("Open file"), WorkingDir,
+    QString ImageName = QFileDialog::getOpenFileName(nullptr, tr("Open file"), WorkingDir,
                                                      tr("All graphic formats (*.bmp *.png *.jpg);;BMP (*.bmp);;PNG (*.png);;JPEG (*.jpg)"));
     if (ImageName != "")
     {
-        LineItem = NULL;
-        RectItem = NULL;
-        MainImage = NULL;
+        LineItem = nullptr;
+        RectItem = nullptr;
+        MainImage = nullptr;
         Scene->clear();
         MainImage = Scene->addPixmap(QPixmap(ImageName));
         Scene->setSceneRect(MainImage->pixmap().rect());
@@ -531,29 +518,26 @@ void MainWindow::on_OpenImage_action_triggered()
 
 void MainWindow::MouseButtonMove()
 {
-    if (ui->Line_action->isChecked())
-    {
+    if (!MainImage) {
+        return;
+    }
+
+    if (ui->Line_action->isChecked()) {
         //
         LineItem->setVisible(false);
         LineItem->setLine(Scene->getTopLeft().x(), Scene->getTopLeft().y(), Scene->getBottomRight().x(), Scene->getBottomRight().y());
         LineItem->setVisible(true);
-    }
-    else if (ui->Area_action->isChecked())
-    {
+    } else if (ui->Area_action->isChecked()) {
         //
         RectItem->setVisible(false);
         RectItem->setRect(QRectF(Scene->getTopLeft(), Scene->getBottomRight()));
         RectItem->setVisible(true);
-    }
-    else if (ui->CalibrMode_action->isChecked())
-    {
+    } else if (ui->CalibrMode_action->isChecked()) {
         //
         LineItem->setVisible(false);
         LineItem->setLine(Scene->getTopLeft().x(), Scene->getTopLeft().y(), Scene->getBottomRight().x(), Scene->getTopLeft().y());
         LineItem->setVisible(true);
-    }
-    else if (ui->Microhardness_action->isChecked())
-    {
+    } else if (ui->Microhardness_action->isChecked()) {
         //
         LineItem->setVisible(false);
         LineItem->setLine(Scene->getTopLeft().x(), Scene->getTopLeft().y(), Scene->getBottomRight().x(), Scene->getBottomRight().y());

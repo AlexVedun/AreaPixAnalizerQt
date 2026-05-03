@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
 
 public:
     QMyGraphicsScene *Scene;
-    QGraphicsPixmapItem *MainImage;
+    QGraphicsPixmapItem *MainImage = nullptr;
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow() override;
