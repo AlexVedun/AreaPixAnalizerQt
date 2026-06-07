@@ -115,6 +115,7 @@
           <string>Image</string>
         </property>
         <addaction name="OpenImage_action" />
+        <addaction name="FillBlackWhite_action" />
         <addaction name="separator" />
         <addaction name="Make_bigger_action" />
         <addaction name="Make_Smaller_action" />
@@ -197,6 +198,15 @@
       </property>
       <property name="text">
         <string>Open...</string>
+      </property>
+    </action>
+    <action name="FillBlackWhite_action">
+      <property name="icon">
+        <iconset resource="AreaPixAnalizer.qrc">
+          <normaloff>:/images/dialog.png</normaloff>:/images/dialog.png</iconset>
+      </property>
+      <property name="text">
+        <string>Fill black/white</string>
       </property>
     </action>
     <action name="Line_action">

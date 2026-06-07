@@ -20,16 +20,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qmygraphicsscene.cpp \
     setscaledialog.cpp \
-    setforcedialog.cpp
+    setforcedialog.cpp \
+    fillblackwhitedialog.cpp
 
 HEADERS  += mainwindow.h \
     qmygraphicsscene.h \
     setscaledialog.h \
-    setforcedialog.h
+    setforcedialog.h \
+    fillblackwhitedialog.h
 
 FORMS    += mainwindow.ui \
     setscaledialog.ui \
-    setforcedialog.ui
+    setforcedialog.ui \
+    fillblackwhitedialog.ui
 
 RESOURCES += \
     AreaPixAnalizer.qrc

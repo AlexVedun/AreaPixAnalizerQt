@@ -10,7 +10,9 @@
 #include <QtCharts/QValueAxis>
 #include <QNetworkAccessManager>
 #include <QVersionNumber>
+#include <QPointer>
 #include "qmygraphicsscene.h"
+#include "fillblackwhitedialog.h"
 
 namespace Ui {
     class MainWindow;
@@ -43,6 +45,7 @@ private slots:
     void on_Make_Smaller_action_triggered();
 
     void on_ClearMarkers_action_triggered();
+    void on_FillBlackWhite_action_triggered();
 
     void on_Set_Force_action_triggered();
 
@@ -61,6 +64,9 @@ private:
     void updateXAxisTitle();
     void updatePlotCursorOverlay(const QPointF &viewPos);
     void hidePlotCursorOverlay();
+    void refreshFillBlackWhitePreview();
+    void commitFillBlackWhiteChanges();
+    void clearFillBlackWhitePreview();
     void checkForUpdates(bool userInitiated);
     void cleanupOldExecutable();
     bool isRemoteVersionNewer(const QString &remoteVersion) const;
@@ -89,6 +95,8 @@ private:
     QGraphicsSimpleTextItem *PlotCursorText;
     QGraphicsLineItem *LineItem;
     QGraphicsRectItem *RectItem;
+    QGraphicsPixmapItem *FillMaskItem;
+    QPointer<FillBlackWhiteDialog> FillBlackWhiteWindow;
     QLabel *ReadyStatus;
     //QLabel *ScaleSegment;
     QLabel *LineLength;
@@ -98,6 +106,8 @@ private:
     QLabel *BlackWhiteResult;
     QLabel *UpdateStatus;
     QProgressBar *Progress;
+    int FillWhiteThreshold;
+    int FillBlackThreshold;
     double Scale;
     double Force;
     bool isForceSet;

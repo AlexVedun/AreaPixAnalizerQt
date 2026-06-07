@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "fillblackwhitedialog.h"
 #include "setscaledialog.h"
 #include "setforcedialog.h"
 #include <QCoreApplication>
@@ -23,6 +24,9 @@ static auto kReleaseApiUrl = "https://api.github.com/repos/AlexVedun/AreaPixAnal
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    FillMaskItem(nullptr),
+    FillWhiteThreshold(255),
+    FillBlackThreshold(0),
     networkManager(new QNetworkAccessManager(this)),
     updateCheckInProgress(false)
 {
@@ -509,10 +513,17 @@ void MainWindow::on_OpenImage_action_triggered()
         LineItem = nullptr;
         RectItem = nullptr;
         MainImage = nullptr;
+        clearFillBlackWhitePreview();
         Scene->clear();
         MainImage = Scene->addPixmap(QPixmap(ImageName));
+        MainImage->setZValue(0.0);
         Scene->setSceneRect(MainImage->pixmap().rect());
         WorkingDir = QDir (ImageName).absolutePath();
+        if (FillBlackWhiteWindow && FillBlackWhiteWindow->isVisible()) {
+            refreshFillBlackWhitePreview();
+        } else {
+            clearFillBlackWhitePreview();
+        }
     }
 }
 
@@ -580,6 +591,78 @@ void MainWindow::on_ClearMarkers_action_triggered()
 {
 //    Scene->items().clear();
 //    ui->ImageView->
+}
+
+void MainWindow::on_FillBlackWhite_action_triggered()
+{
+    if (!MainImage) {
+        QMessageBox::warning(ui->centralWidget, tr("Attention!"),
+                             tr("Image is not loaded."),
+                             QMessageBox::Ok);
+        return;
+    }
+
+    if (FillBlackWhiteWindow && FillBlackWhiteWindow->isVisible()) {
+        FillBlackWhiteWindow->raise();
+        FillBlackWhiteWindow->activateWindow();
+        refreshFillBlackWhitePreview();
+        return;
+    }
+
+    if (!FillBlackWhiteWindow) {
+        FillBlackWhiteWindow = new FillBlackWhiteDialog(this);
+        FillBlackWhiteWindow->setThresholds(FillWhiteThreshold, FillBlackThreshold);
+
+        connect(FillBlackWhiteWindow, &FillBlackWhiteDialog::thresholdsChanged, this, [this]() {
+            if (!FillBlackWhiteWindow || !FillBlackWhiteWindow->isVisible()) {
+                return;
+            }
+            FillWhiteThreshold = FillBlackWhiteWindow->whiteThreshold();
+            FillBlackThreshold = FillBlackWhiteWindow->blackThreshold();
+            refreshFillBlackWhitePreview();
+        });
+        connect(FillBlackWhiteWindow, &FillBlackWhiteDialog::applyClicked, this, [this]() {
+            commitFillBlackWhiteChanges();
+            if (FillBlackWhiteWindow) {
+                FillBlackWhiteWindow->resetThresholdsToDefault();
+                FillWhiteThreshold = 255;
+                FillBlackThreshold = 0;
+                FillBlackWhiteWindow->hide();
+            }
+        });
+        connect(FillBlackWhiteWindow, &FillBlackWhiteDialog::cancelClicked, this, [this]() {
+            clearFillBlackWhitePreview();
+            if (FillBlackWhiteWindow) {
+                FillBlackWhiteWindow->resetThresholdsToDefault();
+                FillWhiteThreshold = 255;
+                FillBlackThreshold = 0;
+                FillBlackWhiteWindow->hide();
+            }
+        });
+        connect(FillBlackWhiteWindow, &QObject::destroyed, this, [this]() {
+            FillBlackWhiteWindow = nullptr;
+        });
+
+        if (!FillBlackWhiteWindow->property("initialPositionSet").toBool()) {
+            FillBlackWhiteWindow->adjustSize();
+            const QRect mainFrame = frameGeometry();
+            const QSize dialogSize = FillBlackWhiteWindow->size();
+            const int marginX = 16;
+            const int marginY = 16;
+            const QPoint targetPos(
+                mainFrame.right() - dialogSize.width() - marginX + 1,
+                mainFrame.top() + marginY
+            );
+            FillBlackWhiteWindow->move(targetPos);
+            FillBlackWhiteWindow->setProperty("initialPositionSet", true);
+        }
+    }
+
+    FillBlackWhiteWindow->setThresholds(FillWhiteThreshold, FillBlackThreshold);
+    FillBlackWhiteWindow->show();
+    FillBlackWhiteWindow->raise();
+    FillBlackWhiteWindow->activateWindow();
+    refreshFillBlackWhitePreview();
 }
 
 void MainWindow::on_Set_Force_action_triggered()
@@ -699,6 +782,94 @@ void MainWindow::updatePlotCursorOverlay(const QPointF &viewPos)
 void MainWindow::hidePlotCursorOverlay()
 {
     PlotCursorText->setVisible(false);
+}
+
+void MainWindow::clearFillBlackWhitePreview()
+{
+    if (FillMaskItem) {
+        Scene->removeItem(FillMaskItem);
+        delete FillMaskItem;
+        FillMaskItem = nullptr;
+    }
+}
+
+void MainWindow::refreshFillBlackWhitePreview()
+{
+    if (!MainImage) {
+        return;
+    }
+
+    const QImage sourceImage = MainImage->pixmap().toImage();
+    const int imageWidth = sourceImage.width();
+    const int imageHeight = sourceImage.height();
+    QImage maskImage(imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
+    maskImage.fill(Qt::transparent);
+
+    Progress->reset();
+    Progress->setMinimum(0);
+    Progress->setMaximum(imageHeight);
+    ReadyStatus->setText(tr(" Wait "));
+
+    for (int y = 0; y < imageHeight; ++y) {
+        QRgb *maskLine = reinterpret_cast<QRgb *>(maskImage.scanLine(y));
+        for (int x = 0; x < imageWidth; ++x) {
+            const int gray = qGray(sourceImage.pixel(x, y));
+            if (gray >= FillWhiteThreshold) {
+                maskLine[x] = QColor(255, 0, 0, 255).rgba();
+            } else if (gray <= FillBlackThreshold) {
+                maskLine[x] = QColor(0, 255, 0, 255).rgba();
+            }
+        }
+
+        Progress->setValue(y + 1);
+        QCoreApplication::processEvents();
+    }
+
+    if (!FillMaskItem) {
+        FillMaskItem = Scene->addPixmap(QPixmap::fromImage(maskImage));
+        FillMaskItem->setZValue(1000.0);
+        FillMaskItem->setAcceptedMouseButtons(Qt::NoButton);
+    } else {
+        FillMaskItem->setPixmap(QPixmap::fromImage(maskImage));
+    }
+
+    ReadyStatus->setText(tr(" Ready "));
+}
+
+void MainWindow::commitFillBlackWhiteChanges()
+{
+    if (!MainImage) {
+        return;
+    }
+
+    const QImage sourceImage = MainImage->pixmap().toImage();
+    const int imageWidth = sourceImage.width();
+    const int imageHeight = sourceImage.height();
+    QImage updatedImage = sourceImage;
+
+    Progress->reset();
+    Progress->setMinimum(0);
+    Progress->setMaximum(imageHeight);
+    ReadyStatus->setText(tr(" Wait "));
+
+    for (int y = 0; y < imageHeight; ++y) {
+        for (int x = 0; x < imageWidth; ++x) {
+            const int gray = qGray(sourceImage.pixel(x, y));
+            if (gray >= FillWhiteThreshold) {
+                updatedImage.setPixelColor(x, y, QColor(255, 255, 255));
+            } else if (gray <= FillBlackThreshold) {
+                updatedImage.setPixelColor(x, y, QColor(0, 0, 0));
+            }
+        }
+
+        Progress->setValue(y + 1);
+        QCoreApplication::processEvents();
+    }
+
+    MainImage->setPixmap(QPixmap::fromImage(updatedImage));
+    clearFillBlackWhitePreview();
+    Progress->setValue(imageHeight);
+    ReadyStatus->setText(tr(" Ready "));
 }
 
 void MainWindow::changeEvent(QEvent *event)
